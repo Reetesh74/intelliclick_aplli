@@ -1,0 +1,136 @@
+.payment-details-container {
+	margin: 10px 151px 0px 146px;
+	padding: 11px 20px 0px 20px;
+	border: 1px solid #E2E8F0;
+	background: #FFFFFF;
+}
+
+.page-name {
+	font-size: 32px;
+	font-weight: 600;
+	line-height: 40px;
+	text-align: left;
+	text-underline-position: from-font;
+	text-decoration-skip-ink: none;
+	color: #333333;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.header-section {
+	gap: 5px;
+}
+
+.subtitle-details {
+	color: #888;
+	font-size: 14px;
+	margin-top: 7px;
+}
+
+.progressbar {
+	margin: 16px 30px 71px 30px;
+}
+
+.form-control label {
+	display: block;
+	margin-bottom: 5px;
+	color: #64748B;
+	font-family: Roboto;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 18px;
+	text-align: left;
+	text-underline-position: from-font;
+	text-decoration-skip-ink: none;
+}
+
+.form-control select,
+.form-control input {
+	width: 16vw;
+	padding: 10px 16px 10px 16px;
+	border-radius: 8px;
+	background: #F8FAFC;
+	border: 1px solid #E2E8F0;
+}
+
+.placeholder-selected {
+	color: #64748B;
+}
+
+.placeholder-selected option {
+	color: black;
+}
+
+.row1,
+.row2 {
+	display: flex;
+	align-content: center;
+	align-items: stretch;
+	justify-content: space-between;
+	margin-bottom: 3vh;
+}
+
+.price-section-control {
+	display: flex;
+	flex-direction: column;
+}
+
+.steps {
+	display: flex;
+	flex-direction: row;
+}
+
+.icon-step {
+	display: flex;
+	flex-direction: column;
+}
+
+.coupon-finalprice-section {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 20px;
+	border-top: 1px solid #FBE8FF;
+	margin: 17vh 5vw 9vh 5vw;
+}
+
+.coupon-finalprice-section-box {
+	display: flex;
+	margin-top: 20px;
+}
+
+.price-section {
+	text-align: right;
+}
+
+.price-section p {
+	margin: 0;
+}
+
+.price-section .price {
+	color: #007bff;
+}
+
+.button-section-details {
+	display: flex;
+	justify-content: space-between;
+	padding: 10px 24px;
+	margin: 0px 151px 0px 146px;
+	border-radius: 0 0 8px 8px;
+	background: #f8fafc;
+	bottom: 0;
+	z-index: 10;
+}
+
+.button-section .back-button,
+.button-section .next-button {
+	padding: 10px 20px;
+	border: none;
+}
+
+.outer-background {
+	background-color: #66696b;
+	padding-top: 5px;
+	min-height: 100vh;
+}
