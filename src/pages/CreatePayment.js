@@ -33,24 +33,26 @@ function CreatePayment() {
   };
 
   return (
-    <div className="container-enrollment">
-      <div className="payment-header">
-        <span className="enrollment-text">Create Payment</span>
-        <span>
-          <img
-            src="/icons/downarrow-icon.svg"
-            alt="Enrollment Icon"
-            className="student-enrollmentIcon"
-          />
-        </span>
+    <div className="center-payment-container">
+      <div className="container-enrollment">
+        <div className="payment-header">
+          <span className="enrollment-text">Create Payment</span>
+          <span>
+            <img
+              src="/icons/downarrow-icon.svg"
+              alt="Enrollment Icon"
+              className="student-enrollmentIcon"
+            />
+          </span>
+        </div>
+        <PaymentForm
+          formData={formData}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          paymentOptions={paymentOptions}
+          buttonText="Create Payment"
+        />
       </div>
-      <PaymentForm
-        formData={formData}
-        handleChange={handleChange}
-        handleSubmit={handleSubmit}
-        paymentOptions={paymentOptions}
-        buttonText="Create Payment"
-      />
     </div>
   );
 }

@@ -1,0 +1,10 @@
+.draft-details-container{
+    padding: 11px 20px 0px 20px;
+    border: 1px solid #E2E8F0;
+    background: #FFFFFF;
+    margin: 10px;
+}
+.container-draft{
+    width: 30vw;
+    height: 62vh;
+}

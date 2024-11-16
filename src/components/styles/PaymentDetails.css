@@ -121,6 +121,7 @@
 	background: #f8fafc;
 	bottom: 0;
 	z-index: 10;
+	/* width: 48.4vw; */
 }
 
 .button-section .back-button,
@@ -131,6 +132,11 @@
 
 .outer-background {
 	background-color: #66696b;
-	padding-top: 5px;
+	/* padding-top: 5px; */
 	min-height: 100vh;
+	/* display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column; */
+	/* min-height: 100vh; */
 }

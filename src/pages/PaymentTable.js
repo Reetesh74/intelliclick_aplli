@@ -91,74 +91,76 @@ const PaymentTable = () => {
   };
 
   return (
-    <div className="payment-container">
-      <div className="payment-header">
-        <span className="enrollment-text">Create Payment</span>
-        <span>
-          <img
-            src="/icons/downarrow-icon.svg"
-            alt="Enrollment Icon"
-            className="student-enrollmentIcon"
-          />
-        </span>
-      </div>
-      <table className="payment-table">
-        <thead className="paymant-table">
-          <tr>
-            <th>Created</th>
-            <th>Payment Mode</th>
-            <th>Payment ID</th>
-            <th>Amount</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {payments.map((payment) => (
-            <tr key={payment.id}>
-              <td>{payment.date}</td>
-              <td>{payment.mode}</td>
-              <td>
-                {payment.paymentId}
-                <img
-                  src="/icons/copy-icon.svg"
-                  alt="Enrollment Icon"
-                  className="copy-icon"
-                  onClick={() => handleCopy(payment.paymentId)}
-                />
-              </td>
-              <td>{payment.amount}</td>
-              <td>
-                <StatusBadge status={payment.status} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {!showForm && (
-        <div className="button-container-payment">
-          <button
-            className="createPaymentableButton"
-            onClick={handleCreateButtonClick}
-          >
+    <div className= "center-payment-container">
+      <div className="payment-container">
+        <div className="payment-header">
+          <span className="enrollment-text">Create Payment</span>
+          <span>
             <img
-              src="/icons/add-icon.svg"
-              alt="Add Icon"
-              className="enrollmentIcon"
+              src="/icons/downarrow-icon.svg"
+              alt="Enrollment Icon"
+              className="student-enrollmentIcon"
             />
-            <span>Create Payment</span>
-          </button>
+          </span>
         </div>
-      )}
+        <table className="payment-table">
+          <thead className="paymant-table">
+            <tr>
+              <th>Created</th>
+              <th>Payment Mode</th>
+              <th>Payment ID</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {payments.map((payment) => (
+              <tr key={payment.id}>
+                <td>{payment.date}</td>
+                <td>{payment.mode}</td>
+                <td>
+                  {payment.paymentId}
+                  <img
+                    src="/icons/copy-icon.svg"
+                    alt="Enrollment Icon"
+                    className="copy-icon"
+                    onClick={() => handleCopy(payment.paymentId)}
+                  />
+                </td>
+                <td>{payment.amount}</td>
+                <td>
+                  <StatusBadge status={payment.status} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {!showForm && (
+          <div className="button-container-payment">
+            <button
+              className="createPaymentableButton"
+              onClick={handleCreateButtonClick}
+            >
+              <img
+                src="/icons/add-icon.svg"
+                alt="Add Icon"
+                className="enrollmentIcon"
+              />
+              <span>Create Payment</span>
+            </button>
+          </div>
+        )}
 
-      {showForm && (
-        <PaymentForm
-          formData={formData}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-          paymentOptions={paymentOptions}
-          buttonText="Create Payment"
-        />
-      )}
+        {showForm && (
+          <PaymentForm
+            formData={formData}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            paymentOptions={paymentOptions}
+            buttonText="Create Payment"
+          />
+        )}
+      </div>
     </div>
   );
 };

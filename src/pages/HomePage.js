@@ -11,6 +11,9 @@ const PaymentDetails = () => {
   const handleCreatePaymentClick = () => {
     navigate("/create-payment");
   };
+  // const handleDreftProduct = () => {
+  //   navigate("/draft-details");
+  // };
   return (
     <div className="container">
       <h2 className="title">Payment Details</h2>
@@ -34,6 +37,10 @@ const PaymentDetails = () => {
             className="createPaymentButton"
             onClick={handleCreatePaymentClick}
           >
+          {/* <button
+            className="createPaymentButton"
+            onClick={handleDreftProduct}
+          > */}
             <img
               src="/icons/add-icon.svg"
               alt="Enrollment Icon"
