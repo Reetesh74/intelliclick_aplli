@@ -65,11 +65,12 @@
 
 .input {
 	padding: 11px 16px;
-	border-radius: 8px;
-	border: 1px solid #ccc;
-	margin-top: 8px;
-	margin-bottom: 17px;
-	font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #E2E8F0;
+    margin-top: 8px;
+    margin-bottom: 17px;
+    font-size: 14px;
+    background: #F8FAFC;
 }
 
 .enrollment-text {
@@ -111,8 +112,8 @@
 }
 
 .center-payment-container {
-	display: flex;
+	/* display: flex;
 	justify-content: center;
-	align-items: center;    
-	min-height: 100vh;
+	align-items: center;     */
+	/* min-height: 100vh; */
   }

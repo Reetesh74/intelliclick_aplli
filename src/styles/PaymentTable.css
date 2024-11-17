@@ -1,7 +1,7 @@
 .payment-container {
-  margin: 50px;
+  /* margin: 50px; */
   border-radius: 8px;
-  border: 1px solid #E2E8F0;
+  /* border: 1px solid #E2E8F0; */
   width: 43vw;
 }
 
@@ -15,10 +15,26 @@
   border-collapse: collapse;
 }
 
+.payment-table-head {
+  border-bottom: 1px solid #E2E8F0;
+}
+
 .payment-table th,
 .payment-table td {
-  padding: 12px 20px;
+  text-align: center;
+  padding: 2vh 0.5vw;
+}
+
+.payment-table th {
+  /* font-family: Roboto;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 24px;
   text-align: left;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none; */
+  color: #1E293B;
+
 }
 
 .status-badge {

@@ -13,7 +13,7 @@ function PaymentForm({
       <div className="row">
         <FormField
           label="Customer Name"
-          placeholder="Customer Name"
+          placeholder="Student Name"
           name="customerName"
           value={formData.customerName}
           onChange={handleChange}

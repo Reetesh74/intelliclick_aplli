@@ -1,4 +1,5 @@
 import React from "react";
+import "../ProgressBar/ProgressBar";
 
 function FormField({
   label,
@@ -10,12 +11,20 @@ function FormField({
   type,
   options,
 }) {
+  // Default value for the 'value' prop in case it is undefined
+  const safeValue = value || "";
+
   return (
     <div className={`field ${fullWidth ? "full-width-field" : ""}`}>
       <label className="label">{label}</label>
       {type === "select" ? (
-        <select name={name} value={value} onChange={onChange} className="input">
-          <option value="" disabled hidden>
+        <select
+          name={name}
+          value={safeValue} // Ensuring 'value' is never undefined
+          onChange={onChange}
+          className={`input ${safeValue === "" ? "placeholder-active" : ""}`}
+        >
+          <option value="" hidden>
             {placeholder}
           </option>
           {options.map((option, index) => (
@@ -29,7 +38,7 @@ function FormField({
           type="text"
           placeholder={placeholder}
           name={name}
-          value={value}
+          value={safeValue} // Same fallback for input as well
           onChange={onChange}
           className="input"
         />
