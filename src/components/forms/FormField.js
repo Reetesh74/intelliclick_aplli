@@ -1,5 +1,5 @@
 import React from "react";
-import "../ProgressBar/ProgressBar";
+import "../ProgressBar/ProgressBar"; // Assuming your progress bar CSS is in this file
 
 function FormField({
   label,
@@ -11,8 +11,7 @@ function FormField({
   type,
   options,
 }) {
-  // Default value for the 'value' prop in case it is undefined
-  const safeValue = value || "";
+  const safeValue = value || ""; // Default value in case it's undefined
 
   return (
     <div className={`field ${fullWidth ? "full-width-field" : ""}`}>
@@ -20,9 +19,11 @@ function FormField({
       {type === "select" ? (
         <select
           name={name}
-          value={safeValue} // Ensuring 'value' is never undefined
+          value={safeValue}
           onChange={onChange}
-          className={`input ${safeValue === "" ? "placeholder-active" : ""}`}
+          className={`input custom-select ${
+            fullWidth ? "full-width-select" : ""
+          } ${safeValue === "" ? "placeholder-active" : ""}`}
         >
           <option value="" hidden>
             {placeholder}
@@ -38,7 +39,7 @@ function FormField({
           type="text"
           placeholder={placeholder}
           name={name}
-          value={safeValue} // Same fallback for input as well
+          value={safeValue}
           onChange={onChange}
           className="input"
         />

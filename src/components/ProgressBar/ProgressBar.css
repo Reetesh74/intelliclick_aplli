@@ -65,16 +65,23 @@
 .step-label.completed {
     color: #8e198f;
 }
+
 /* Default text color for the select box */
 /* .input {
     color: black;
   } */
-  
-  /* Apply red color to select when placeholder is active */
-  .input.placeholder-active {
-    color: red;
-  }
-  
-  /* select option.placeholder {
+
+/* Apply red color to select when placeholder is active */
+.input.placeholder-active {
+    color:#64748B;
+}
+
+/* select option.placeholder {
     color: rgb(81, 0, 255);  /* Red color for the placeholder text */
-  /* } */ 
+/* } */
+select {
+    /* -webkit-appearance: none;   
+    -moz-appearance: none;      
+     appearance: none;  */
+}
+
