@@ -195,7 +195,7 @@ const PaymentTable = () => {
       .writeText(text)
       .then(() => {
         setCopiedId(text);
-        setTimeout(() => setCopiedId(null), 2000); 
+        setTimeout(() => setCopiedId(null), 2000);
       })
       .catch((error) => {
         console.error("Copy failed!", error);
@@ -235,12 +235,14 @@ const PaymentTable = () => {
               <th style={{ textAlign: "center" }}>Status</th>
             </tr>
           </thead>
-          <tbody style={{ fontSize: "calc(0.8vw + 0.5vh)" }}>
+          <tbody style={{ fontSize: "calc(0.7vw + 0.4vh)" }}>
             {payments.length > 0 ? (
               payments.map((payment) => (
                 <tr key={payment._id}>
                   <td>{formatDate(payment.orderDate)}</td>
-                  <td>{payment.paymentMode}</td>
+                  <td style={{ textTransform: "capitalize" }}>
+                    {payment.paymentMode}
+                  </td>
                   <td style={{ display: "flex", alignItems: "center" }}>
                     {payment.orderId}
                     <img

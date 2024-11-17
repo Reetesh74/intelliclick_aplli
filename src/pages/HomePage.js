@@ -18,9 +18,45 @@ const PaymentDetails = () => {
     course_Id: "667b0abe04c71805e5441a3b",
     createdBy: "672486c0066e7ee331bd2a7e",
   });
+  const [errors, setErrors] = useState({});
+  const validateForm = () => {
+    let formErrors = {};
+    let isValid = true;
+
+    if (!formData.studentName) {
+      formErrors.studentName = "Student name is required.";
+      isValid = false;
+    }
+
+    if (!formData.studentMobile || formData.studentMobile.length !== 10) {
+      formErrors.studentMobile = "Mobile number must be 10 digits.";
+      isValid = false;
+    }
+
+    if (!formData.amount || isNaN(formData.amount) || formData.amount <= 0) {
+      formErrors.amount = "Amount must be a positive number.";
+      isValid = false;
+    }
+
+    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) {
+      formErrors.email = "Please enter a valid email.";
+      isValid = false;
+    }
+
+    if (!formData.paymentMode) {
+      formErrors.paymentMode = "Please select a payment method.";
+      isValid = false;
+    }
+
+    setErrors(formErrors);
+    return isValid;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
     try {
       localStorage.setItem(
         "authToken",
@@ -34,24 +70,6 @@ const PaymentDetails = () => {
         Authorization: `${token}`,
       });
 
-      // const response = await axios.post(
-      //   "https://intelliclick-server-dev-1082184296521.us-central1.run.app/api/payment/write/create-order",
-      //   formData,
-      //   {
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       "Authorization": `Bearer ${token}`,
-      //     },
-      //   }
-      // );
-      // const headers = { Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzI0ODZjMDA2NmU3ZWUzMzFiZDJhN2UiLCJyb2xlIjoiQkRBIiwibW9kZXJhdG9yIjpmYWxzZSwiZW1haWwiOiJiaXJhZy5ncHRhQGdtYWlsLmNvbSIsIm5hbWUiOiJCaXJhaiIsImlhdCI6MTczMTgyMjYwNn0.6hLwQvbBF6kX9tm-DCahca__PWKC0eKocKearl7m60Y" }; // auth header with bearer token
-      // fetch("https://intelliclick-server-dev-1082184296521.us-central1.run.app/api/payment/write/create-order",{method: "post"}, { headers })
-      //   .then((response) => response.json())
-      //   // .then((data) => (element.innerHTML = data.name));
-
-      // // console.log("Response from API:", response.data);
-      // setPaymentCreated(true);
-      // setShowForm(false);
       const paymentData = {
         studentMobile: formData.studentMobile,
         studentName: formData.studentName,
@@ -59,7 +77,7 @@ const PaymentDetails = () => {
         course: formData.course_Id,
         createdBy: formData.createdBy,
         amount: formData.amount,
-        paymentMode: "razorpay",
+        paymentMode: formData.paymentMode,
         currency: "INR",
       };
 
@@ -91,7 +109,6 @@ const PaymentDetails = () => {
   };
 
   const paymentOptions = [
-    // { value: "", label: "Select", disabled: true },
     { value: "cashfree", label: "cashfree" },
     { value: "razorpay", label: "razorpay" },
   ];
@@ -155,6 +172,7 @@ const PaymentDetails = () => {
               handleSubmit={handleSubmit}
               paymentOptions={paymentOptions}
               buttonText="Create Payment"
+              errors={errors}
             />
           )}
           <PaymentTable />
@@ -170,7 +188,7 @@ const PaymentDetails = () => {
                 src="/icons/add-icon.svg"
                 alt="Create Payment Icon"
                 className="enrollmentIcon"
-                style={{width:"24px",height:"24px"}}
+                style={{ width: "24px", height: "24px" }}
               />
               <span
                 style={{
@@ -199,8 +217,18 @@ const PaymentDetails = () => {
                     src="/icons/add-icon.svg"
                     alt="Create Payment Icon"
                     className="enrollmentIcon"
+                    style={{ width: "24px", height: "24px" }}
                   />
-                  <span>Create Payment</span>
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: "600",
+                      lineHeight: "18px",
+                      textAlign: "center",
+                    }}
+                  >
+                    Create Payment
+                  </span>
                 </button>
               </div>
             </>

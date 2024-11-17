@@ -14,15 +14,15 @@ function PaymentForm({
         <FormField
           label="Customer Name"
           placeholder="Student Name"
-          name="customerName"
-          value={formData.customerName}
+          name="studentName"
+          value={formData.studentName}
           onChange={handleChange}
         />
         <FormField
           label="Phone Number"
           placeholder="Phone Number"
-          name="phoneNumber"
-          value={formData.phoneNumber}
+          name="studentMobile"
+          value={formData.studentMobile}
           onChange={handleChange}
         />
       </div>
@@ -31,8 +31,8 @@ function PaymentForm({
         <FormField
           label="Payment"
           placeholder="select"
-          name="payment"
-          value={formData.payment}
+          name="paymentMode"
+          value={formData.paymentMode}
           onChange={handleChange}
           type="select"
           options={paymentOptions}
