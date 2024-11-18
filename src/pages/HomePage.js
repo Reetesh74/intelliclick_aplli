@@ -8,6 +8,7 @@ const PaymentDetails = () => {
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [paymentCreated, setPaymentCreated] = useState(false);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     studentName: "",
     studentMobile: "",
@@ -18,57 +19,54 @@ const PaymentDetails = () => {
     course_Id: "667b0abe04c71805e5441a3b",
     createdBy: "672486c0066e7ee331bd2a7e",
   });
-  const [errors, setErrors] = useState({});
   const validateForm = () => {
-    let formErrors = {};
-    let isValid = true;
-
-    if (!formData.studentName) {
-      formErrors.studentName = "Student name is required.";
-      isValid = false;
+    const newErrors = {};
+    if (!formData.studentName.trim()) {
+      newErrors.studentName = "Student name is required.";
     }
-
-    if (!formData.studentMobile || formData.studentMobile.length !== 10) {
-      formErrors.studentMobile = "Mobile number must be 10 digits.";
-      isValid = false;
+    if (!formData.studentMobile.trim()) {
+      newErrors.studentMobile = "Mobile number is required.";
+    } else if (!/^\d{10}$/.test(formData.studentMobile)) {
+      newErrors.studentMobile = "Enter a valid 10-digit mobile number.";
     }
-
-    if (!formData.amount || isNaN(formData.amount) || formData.amount <= 0) {
-      formErrors.amount = "Amount must be a positive number.";
-      isValid = false;
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required.";
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+    ) {
+      newErrors.email = "Enter a valid email address.";
     }
-
-    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) {
-      formErrors.email = "Please enter a valid email.";
-      isValid = false;
+    if (!formData.amount.trim()) {
+      newErrors.amount = "Amount is required.";
+    } else if (isNaN(Number(formData.amount)) || Number(formData.amount) <= 0) {
+      newErrors.amount = "Enter a valid amount.";
     }
-
     if (!formData.paymentMode) {
-      formErrors.paymentMode = "Please select a payment method.";
-      isValid = false;
+      newErrors.paymentMode = "Please select a payment mode.";
     }
 
-    setErrors(formErrors);
-    return isValid;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
+      console.error("Validation errors:", errors);
       return;
     }
     try {
-      localStorage.setItem(
-        "authToken",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzI0ODZjMDA2NmU3ZWUzMzFiZDJhN2UiLCJyb2xlIjoiQkRBIiwibW9kZXJhdG9yIjpmYWxzZSwiZW1haWwiOiJiaXJhZy5ncHRhQGdtYWlsLmNvbSIsIm5hbWUiOiJCaXJhaiIsImlhdCI6MTczMTgyMjYwNn0.6hLwQvbBF6kX9tm-DCahca__PWKC0eKocKearl7m60Y"
-      );
-      const token = localStorage.getItem("authToken");
-      console.log("Retrieved token:", token);
+      // localStorage.setItem(
+      //   "authToken",
+      //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzI0ODZjMDA2NmU3ZWUzMzFiZDJhN2UiLCJyb2xlIjoiQkRBIiwibW9kZXJhdG9yIjpmYWxzZSwiZW1haWwiOiJiaXJhZy5ncHRhQGdtYWlsLmNvbSIsIm5hbWUiOiJCaXJhaiIsImlhdCI6MTczMTgyMjYwNn0.6hLwQvbBF6kX9tm-DCahca__PWKC0eKocKearl7m60Y"
+      // );
+      // const token = localStorage.getItem("authToken");
+      // console.log("Retrieved token:", token);
 
-      console.log("Request Headers:", {
-        "Content-Type": "application/json",
-        Authorization: `${token}`,
-      });
+      // console.log("Request Headers:", {
+      //   "Content-Type": "application/json",
+      //   Authorization: `${token}`,
+      // });
 
       const paymentData = {
         studentMobile: formData.studentMobile,
@@ -80,6 +78,7 @@ const PaymentDetails = () => {
         paymentMode: formData.paymentMode,
         currency: "INR",
       };
+      
 
       const rawResponse = await fetch(
         "https://intelliclick-server-dev-1082184296521.us-central1.run.app/api/payment/write/create-order",
@@ -172,7 +171,6 @@ const PaymentDetails = () => {
               handleSubmit={handleSubmit}
               paymentOptions={paymentOptions}
               buttonText="Create Payment"
-              errors={errors}
             />
           )}
           <PaymentTable />
