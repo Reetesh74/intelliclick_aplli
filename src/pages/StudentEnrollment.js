@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 import "../styles/StudentEnrollment.css";
 import FormField from "../components/forms/FormField";
 function StudentEnrollment() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     studentName: "",
-    phoneNumber: "",
+    mobile: "",
     parentName: "",
     parentMobile: "",
     email: "",
@@ -22,24 +22,46 @@ function StudentEnrollment() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/details-payment");
+    // navigate("/details-payment");
+    try {
+      const paymentData = {
+        studentName: formData.studentName,
+        mobile:formData.mobile,
+        parentName:formData.parentName,
+        parentMobile:formData.parentMobile,
+        email:formData.email
+      };
+      const rawResponse = await fetch(
+        "https://intelliclick-server-dev-1082184296521.us-central1.run.app/api/enrollment/write/create-or-update",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization:
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzI0ODZjMDA2NmU3ZWUzMzFiZDJhN2UiLCJyb2xlIjoiQkRBIiwibW9kZXJhdG9yIjpmYWxzZSwiZW1haWwiOiJiaXJhZy5ncHRhQGdtYWlsLmNvbSIsIm5hbWUiOiJCaXJhaiIsImlhdCI6MTczMTkxMzg1N30.Cg1FEhlMsM5o5l5CNosx7CugZ0sAMC7y6kmwJsAooWk",
+          },
+          body: JSON.stringify(paymentData),
+        }
+      );
+      if (rawResponse.ok) {
+        const responseData = await rawResponse.json();
+        console.log("Payment created successfully:", responseData);
+      } else {
+        const errorData = await rawResponse.json();
+        console.error("Error creating payment:", errorData);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error.response || error.message);
+    }
   };
 
   return (
     <div className="center-payment-container">
       <div className="container-enrollment">
-        <div className="header">
-          <span className="enrollment-text">Student Enrollment</span>
-          <span>
-            <img
-              src="/icons/downarrow-blue.svg"
-              alt="Enrollment Icon"
-              className="student-enrollmentIcon"
-            />
-          </span>
-        </div>
+       
         <form onSubmit={handleSubmit} className="form">
           <div className="row">
             <FormField
@@ -52,8 +74,8 @@ function StudentEnrollment() {
             <FormField
               label="Phone Number"
               placeholder="Phone Number"
-              name="phoneNumber"
-              value={formData.phoneNumber}
+              name="mobile"
+              value={formData.mobile}
               onChange={handleChange}
             />
           </div>

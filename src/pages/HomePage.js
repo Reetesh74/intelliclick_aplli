@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import PaymentForm from "../components/forms/PaymentForm";
 import PaymentTable from "./PaymentTable";
 import "../styles/HomePage.css";
+import StudentEnrollment from "./StudentEnrollment";
 
 const PaymentDetails = () => {
   const navigate = useNavigate();
@@ -31,9 +32,7 @@ const PaymentDetails = () => {
     }
     if (!formData.email.trim()) {
       newErrors.email = "Email is required.";
-    } else if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-    ) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Enter a valid email address.";
     }
     if (!formData.amount.trim()) {
@@ -56,18 +55,6 @@ const PaymentDetails = () => {
       return;
     }
     try {
-      // localStorage.setItem(
-      //   "authToken",
-      //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzI0ODZjMDA2NmU3ZWUzMzFiZDJhN2UiLCJyb2xlIjoiQkRBIiwibW9kZXJhdG9yIjpmYWxzZSwiZW1haWwiOiJiaXJhZy5ncHRhQGdtYWlsLmNvbSIsIm5hbWUiOiJCaXJhaiIsImlhdCI6MTczMTgyMjYwNn0.6hLwQvbBF6kX9tm-DCahca__PWKC0eKocKearl7m60Y"
-      // );
-      // const token = localStorage.getItem("authToken");
-      // console.log("Retrieved token:", token);
-
-      // console.log("Request Headers:", {
-      //   "Content-Type": "application/json",
-      //   Authorization: `${token}`,
-      // });
-
       const paymentData = {
         studentMobile: formData.studentMobile,
         studentName: formData.studentName,
@@ -78,7 +65,6 @@ const PaymentDetails = () => {
         paymentMode: formData.paymentMode,
         currency: "INR",
       };
-      
 
       const rawResponse = await fetch(
         "https://intelliclick-server-dev-1082184296521.us-central1.run.app/api/payment/write/create-order",
@@ -88,7 +74,7 @@ const PaymentDetails = () => {
             Accept: "application/json",
             "Content-Type": "application/json",
             Authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzI0ODZjMDA2NmU3ZWUzMzFiZDJhN2UiLCJyb2xlIjoiQkRBIiwibW9kZXJhdG9yIjpmYWxzZSwiZW1haWwiOiJiaXJhZy5ncHRhQGdtYWlsLmNvbSIsIm5hbWUiOiJCaXJhaiIsImlhdCI6MTczMTgyMjYwNn0.6hLwQvbBF6kX9tm-DCahca__PWKC0eKocKearl7m60Y",
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzI0ODZjMDA2NmU3ZWUzMzFiZDJhN2UiLCJyb2xlIjoiQkRBIiwibW9kZXJhdG9yIjpmYWxzZSwiZW1haWwiOiJiaXJhZy5ncHRhQGdtYWlsLmNvbSIsIm5hbWUiOiJCaXJhaiIsImlhdCI6MTczMTkxMzg1N30.Cg1FEhlMsM5o5l5CNosx7CugZ0sAMC7y6kmwJsAooWk",
           },
           body: JSON.stringify(paymentData),
         }
@@ -173,34 +159,8 @@ const PaymentDetails = () => {
               buttonText="Create Payment"
             />
           )}
-          <PaymentTable />
-          <div style={{ background: "#a8abad1a", height: "90px" }}>
-            <button
-              className="createPaymentButton-table newPaymentButton"
-              onClick={() => {
-                setPaymentCreated(false);
-                setShowForm(true);
-              }}
-            >
-              <img
-                src="/icons/add-icon.svg"
-                alt="Create Payment Icon"
-                className="enrollmentIcon"
-                style={{ width: "24px", height: "24px" }}
-              />
-              <span
-                style={{
-                  fontSize: "13px",
-                  fontWeight: "600",
-                  lineHeight: "18px",
-                  textAlign: "center",
-                }}
-              >
-                Create Payment
-              </span>
-            </button>
-          </div>
-          {/* {paymentCreated && (
+
+          {paymentCreated && (
             <>
               <PaymentTable />
               <div style={{ background: "#a8abad1a", height: "90px" }}>
@@ -230,7 +190,7 @@ const PaymentDetails = () => {
                 </button>
               </div>
             </>
-          )} */}
+          )}
         </div>
 
         <div className="studentEnrollmentBox">
@@ -253,6 +213,8 @@ const PaymentDetails = () => {
             />
             <span>Enrollment</span>
           </button>
+
+          <StudentEnrollment />
         </div>
       </div>
     </div>
