@@ -8,7 +8,9 @@ import StudentEnrollment from "./StudentEnrollment";
 const PaymentDetails = () => {
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
+  const [showEnrollment, setShowEnrollemnt] = useState(false);
   const [paymentCreated, setPaymentCreated] = useState(false);
+  const [showTable, setShowTable] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     studentName: "",
@@ -74,7 +76,7 @@ const PaymentDetails = () => {
             Accept: "application/json",
             "Content-Type": "application/json",
             Authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzI0ODZjMDA2NmU3ZWUzMzFiZDJhN2UiLCJyb2xlIjoiQkRBIiwibW9kZXJhdG9yIjpmYWxzZSwiZW1haWwiOiJiaXJhZy5ncHRhQGdtYWlsLmNvbSIsIm5hbWUiOiJCaXJhaiIsImlhdCI6MTczMTkxODgzNX0.uyI0sPXS4SZZC70d1l5xBUvFh1PDpZbL2Lk3aalN4mw",
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzI0ODZjMDA2NmU3ZWUzMzFiZDJhN2UiLCJyb2xlIjoiQkRBIiwibW9kZXJhdG9yIjpmYWxzZSwiZW1haWwiOiJiaXJhZy5ncHRhQGdtYWlsLmNvbSIsIm5hbWUiOiJCaXJhaiIsImlhdCI6MTczMTkyODI5NH0.osI7Pi8odYkFJhTxpaxf4ZMwIExOMIR4evhnWyTsYP0",
           },
           body: JSON.stringify(paymentData),
         }
@@ -84,6 +86,7 @@ const PaymentDetails = () => {
         console.log("Payment created successfully:", responseData);
         setPaymentCreated(true);
         setShowForm(false);
+        setShowTable(true);
       } else {
         const errorData = await rawResponse.json();
         console.error("Error creating payment:", errorData);
@@ -107,11 +110,15 @@ const PaymentDetails = () => {
   };
 
   const handleCreateButtonClick = () => {
+    if (paymentCreated) {
+      // Reset paymentCreated if the table is being closed
+      setShowTable(true);
+    }
     setShowForm((prev) => !prev);
   };
 
   const handleEnrollmentClick = () => {
-    navigate("/student-enrollemnt");
+    setShowEnrollemnt((prev) => !prev);
   };
 
   return (
@@ -128,7 +135,7 @@ const PaymentDetails = () => {
             <span onClick={handleCreateButtonClick}>
               <img
                 src={
-                  showForm
+                  showTable || showForm
                     ? "/icons/uparrow-icon.svg"
                     : "/icons/downarrow-icon.svg"
                 }
@@ -137,7 +144,7 @@ const PaymentDetails = () => {
               />
             </span>
           </span>
-          {!showForm && !paymentCreated && (
+          {/* {!showForm &&  showTable && (
             <button
               className="createPaymentButton"
               onClick={handleCreateButtonClick}
@@ -149,8 +156,37 @@ const PaymentDetails = () => {
               />
               <span>Create Payment</span>
             </button>
+          )} */}
+          {!showForm && !paymentCreated ? (
+            <button
+              className="createPaymentButton"
+              onClick={handleCreateButtonClick}
+            >
+              <img
+                src="/icons/add-icon.svg"
+                alt="Enrollment Icon"
+                className="enrollmentIcon"
+              />
+              <span>Create Payment</span>
+            </button>
+          ) : (
+            !showForm &&
+            showTable && (
+              <button
+                className="createPaymentButton"
+                onClick={handleCreateButtonClick}
+              >
+                <img
+                  src="/icons/add-icon.svg"
+                  alt="Enrollment Icon"
+                  className="enrollmentIcon"
+                />
+                <span>Create Payment</span>
+              </button>
+            )
           )}
-          {!paymentCreated && showForm && (
+          
+          {!paymentCreated && showForm&& (
             <PaymentForm
               formData={formData}
               handleChange={handleChange}
@@ -160,7 +196,7 @@ const PaymentDetails = () => {
             />
           )}
 
-          {paymentCreated && (
+          {paymentCreated && showForm && showTable && (
             <>
               <PaymentTable />
               <div style={{ background: "#a8abad1a", height: "90px" }}>
@@ -196,25 +232,32 @@ const PaymentDetails = () => {
         <div className="studentEnrollmentBox">
           <span className="boxTitle-enrollment">
             <span className="boldText">Student Enrollment</span>
-            <span>
+            <span onClick={handleEnrollmentClick}>
               <img
-                src="/icons/downarrow-blue.svg"
+                src={
+                  showEnrollment
+                    ? "/icons/up-arrowenrollemnt-icon.svg"
+                    : "/icons/downarrow-blue.svg"
+                }
                 alt="Enrollment Icon"
                 className="enrollmentIcon"
               />
             </span>
           </span>
-
-          <button className="enrollmentButton" onClick={handleEnrollmentClick}>
-            <img
-              src="/icons/enrollment-icon.svg"
-              alt="Enrollment Icon"
-              className="enrollmentIcon"
-            />
-            <span>Enrollment</span>
-          </button>
-
-          <StudentEnrollment />
+          {!showEnrollment && (
+            <button
+              className="enrollmentButton"
+              onClick={handleEnrollmentClick}
+            >
+              <img
+                src="/icons/enrollment-icon.svg"
+                alt="Enrollment Icon"
+                className="enrollmentIcon"
+              />
+              <span>Enrollment</span>
+            </button>
+          )}
+          {showEnrollment && <StudentEnrollment />}
         </div>
       </div>
     </div>

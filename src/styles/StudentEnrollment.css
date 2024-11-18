@@ -1,7 +1,7 @@
 .container-enrollment {
 	/* margin: 50px; */
 	border: 1px solid #ccc;
-	border-radius: 8px;
+	border-radius: 0px 0px 8px 8px;
 	font-family: Arial, sans-serif;
 	width: 43vw;
 }
@@ -28,7 +28,7 @@
 
 .form {
 	padding: 20px;
-	background: #a8abad1a;
+	background: #f0fdf4;
 }
 
 .label {
@@ -65,12 +65,12 @@
 
 .input {
 	padding: 11px 16px;
-    border-radius: 8px;
-    border: 1px solid #E2E8F0;
-    margin-top: 8px;
-    margin-bottom: 17px;
-    font-size: 14px;
-    background: #F8FAFC;
+	border-radius: 8px;
+	border: 1px solid #E2E8F0;
+	margin-top: 8px;
+	margin-bottom: 17px;
+	font-size: 14px;
+	background: #F8FAFC;
 }
 
 .enrollment-text {
@@ -116,5 +116,5 @@
 	justify-content: center;
 	align-items: center;     */
 	/* min-height: 100vh; */
-  }
-  
+}
+
