@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PaymentForm from "../components/forms/PaymentForm";
 import PaymentTable from "./PaymentTable";
@@ -20,23 +20,21 @@ const PaymentDetails = () => {
     email: "",
     currency: "INR",
     course_Id: "667b0abe04c71805e5441a3b",
-    createdBy: "672486c0066e7ee331bd2a7e",
+    createdBy: "6678ecbf52f6b64bd8224616",
   });
   const validateForm = () => {
     const newErrors = {};
     if (!formData.studentName.trim()) {
-      newErrors.studentName = "Student name is required.";
+      newErrors.studentName = "Name is required.";
+    } else if (!/^[a-zA-Z\s]+$/.test(formData.studentName)) {
+      newErrors.studentName = "Name must only contain letters.";
     }
     if (!formData.studentMobile.trim()) {
-      newErrors.studentMobile = "Mobile number is required.";
+      newErrors.studentMobile = "Number is required.";
     } else if (!/^\d{10}$/.test(formData.studentMobile)) {
       newErrors.studentMobile = "Enter a valid 10-digit mobile number.";
     }
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Enter a valid email address.";
-    }
+
     if (!formData.amount.trim()) {
       newErrors.amount = "Amount is required.";
     } else if (isNaN(Number(formData.amount)) || Number(formData.amount) <= 0) {
@@ -46,6 +44,10 @@ const PaymentDetails = () => {
       newErrors.paymentMode = "Please select a payment mode.";
     }
 
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email address.";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -53,7 +55,7 @@ const PaymentDetails = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
-      console.error("Validation errors:", errors);
+      console.log(errors);
       return;
     }
     try {
@@ -89,7 +91,6 @@ const PaymentDetails = () => {
         setShowTable(true);
       } else {
         const errorData = await rawResponse.json();
-        console.error("Error creating payment:", errorData);
       }
     } catch (error) {
       console.error("Error submitting form:", error.response || error.message);
@@ -107,13 +108,18 @@ const PaymentDetails = () => {
       ...prevData,
       [name]: value,
     }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
+    }));
   };
 
   const handleCreateButtonClick = () => {
-    if (paymentCreated) {
-      // Reset paymentCreated if the table is being closed
-      setShowTable(true);
-    }
+    // if (paymentCreated) {
+    //   setShowTable(true);
+    // }
+    // setShowTable(false);
+    setShowTable((prev) => !prev);
     setShowForm((prev) => !prev);
   };
 
@@ -135,7 +141,7 @@ const PaymentDetails = () => {
             <span onClick={handleCreateButtonClick}>
               <img
                 src={
-                  showTable || showForm
+                  showForm
                     ? "/icons/uparrow-icon.svg"
                     : "/icons/downarrow-icon.svg"
                 }
@@ -170,11 +176,14 @@ const PaymentDetails = () => {
               <span>Create Payment</span>
             </button>
           ) : (
-            !showForm &&
-            showTable && (
+            !showTable &&
+            paymentCreated && (
               <button
                 className="createPaymentButton"
-                onClick={handleCreateButtonClick}
+                onClick={() => {
+                  setPaymentCreated(false);
+                  setShowForm(true);
+                }}
               >
                 <img
                   src="/icons/add-icon.svg"
@@ -193,10 +202,11 @@ const PaymentDetails = () => {
               handleSubmit={handleSubmit}
               paymentOptions={paymentOptions}
               buttonText="Create Payment"
+              errors={errors}
             />
           )}
 
-          {paymentCreated && showForm && showTable && (
+          {paymentCreated && showTable && (
             <>
               <PaymentTable />
               <div style={{ background: "#a8abad1a", height: "90px" }}>

@@ -7,6 +7,7 @@ function PaymentForm({
   handleSubmit,
   paymentOptions,
   buttonText,
+  errors
 }) {
   return (
     <form onSubmit={handleSubmit} className="form">
@@ -17,6 +18,7 @@ function PaymentForm({
           name="studentName"
           value={formData.studentName}
           onChange={handleChange}
+          error={errors.studentName}
         />
         <FormField
           label="Phone Number"
@@ -24,6 +26,7 @@ function PaymentForm({
           name="studentMobile"
           value={formData.studentMobile}
           onChange={handleChange}
+          error={errors.studentMobile}
         />
       </div>
 
@@ -36,6 +39,7 @@ function PaymentForm({
           onChange={handleChange}
           type="select"
           options={paymentOptions}
+          error={errors.paymentMode}
         />
         <FormField
           label="Amount"
@@ -43,17 +47,19 @@ function PaymentForm({
           name="amount"
           value={formData.amount}
           onChange={handleChange}
+          error={errors.amount} 
         />
       </div>
 
       <div className="row">
         <FormField
           label="Email"
-          placeholder="Email (optional)"
+          placeholder="Email(optional)"
           name="email"
           value={formData.email}
           onChange={handleChange}
           fullWidth
+          error={errors.email}
         />
       </div>
 

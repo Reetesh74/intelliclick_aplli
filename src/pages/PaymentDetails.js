@@ -6,14 +6,19 @@ import "../styles/PaymentDetails.css";
 const PaymentDetails = () => {
   const navigate = useNavigate();
   const [formValues, setFormValues] = useState({
-    planType: "",
-    validity: "",
+    period: "",
+    name: "",
     subjects: "",
     class: "",
     board: "",
     state: "",
-    coupon: "6000",
-    finalPrice: "6000",
+    interval : 1,
+    coupon: "",
+    amount: "",
+    maxAmount:"",
+    minAmount:"",
+    standards:["667b0abe04c71805e5441a3b"],
+    currency: "INR",
   });
 
   const [showModal, setShowModal] = useState(false);
@@ -25,14 +30,56 @@ const PaymentDetails = () => {
     });
   };
 
-  const handleNext = () => {
-    debugger;
+  const handleNext = async() => {
     setShowModal(true);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async() => {
     setShowModal(false);
-    navigate("/payment-status");
+    try {
+      const requestData = {
+        period: formValues.period, // e.g., "monthly" or "annual"
+        name: formValues.name, // e.g., "John Doe"
+        subjects: formValues.subjects, // e.g., "math, science"
+        class: formValues.class, // e.g., "Class 10"
+        board: formValues.board, // e.g., "CBSE"
+        state: formValues.state, // e.g., "Maharashtra"
+        interval: formValues.interval, // e.g., 1
+        coupon: formValues.coupon, // e.g., "DISCOUNT20"
+        amount: formValues.amount, // e.g., "6000"
+        maxAmount: formValues.maxAmount, // e.g., "7999"
+        minAmount: formValues.minAmount, // e.g., "5999"
+        standards: formValues.standards, // e.g., ["667b0abe04c71805e5441a3b"]
+        currency: formValues.currency, // e.g., "INR"
+      };
+
+      const rawResponse = await fetch(
+        "https://intelliclick-server-dev-1082184296521.us-central1.run.app/api/plan/write/create-or-update",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization:
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzI0ODZjMDA2NmU3ZWUzMzFiZDJhN2UiLCJyb2xlIjoiQkRBIiwibW9kZXJhdG9yIjpmYWxzZSwiZW1haWwiOiJiaXJhZy5ncHRhQGdtYWlsLmNvbSIsIm5hbWUiOiJCaXJhaiIsImlhdCI6MTczMTkyODI5NH0.osI7Pi8odYkFJhTxpaxf4ZMwIExOMIR4evhnWyTsYP0",
+          },
+          body: JSON.stringify(requestData),
+        }
+      );
+      if (rawResponse.ok) {
+        const responseData = await rawResponse.json();
+        console.log("Payment created successfully:", responseData);
+        // setPaymentCreated(true);
+        // setShowForm(false);
+        // setShowTable(true);
+      } else {
+        const errorData = await rawResponse.json();
+        console.error("Error creating payment:", errorData);
+      }
+    } catch (error) {
+      
+    }
+    // navigate("/payment-status");
   };
 
   const handleClose = () => {
