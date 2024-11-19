@@ -185,8 +185,8 @@ const PaymentDetails = () => {
               </button>
             )
           )}
-          
-          {!paymentCreated && showForm&& (
+
+          {!paymentCreated && showForm && (
             <PaymentForm
               formData={formData}
               handleChange={handleChange}

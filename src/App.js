@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import PaymentDetails from "./components/PaymentDetails";
+import PaymentDetails from "./pages/PaymentDetails";
 import PaymentStatus from "./components/PaymentStatus";
 import StudentEnrollment from "./pages/StudentEnrollment";
 import CreatePayment from "./pages/CreatePayment";

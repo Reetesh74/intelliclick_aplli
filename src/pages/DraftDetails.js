@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../components/styles/PaymentDetails.css";
+import "../styles/PaymentDetails.css";
 import "../styles/DraftDetails.css";
 import PaymentForm from "../components/forms/PaymentForm";
 const PaymentDetails = () => {

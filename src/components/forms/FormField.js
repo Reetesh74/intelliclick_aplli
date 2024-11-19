@@ -10,6 +10,7 @@ function FormField({
   fullWidth,
   type,
   options,
+  error
 }) {
   const safeValue = value || ""; // Default value in case it's undefined
 
@@ -43,7 +44,9 @@ function FormField({
           onChange={onChange}
           className="input"
         />
+        
       )}
+      {error && <span className="error-message">{error}</span>}
     </div>
   );
 }

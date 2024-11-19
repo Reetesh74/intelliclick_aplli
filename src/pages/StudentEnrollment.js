@@ -61,7 +61,7 @@
 //   return (
 //     <div className="center-payment-container">
 //       <div className="container-enrollment">
-       
+
 //         <form onSubmit={handleSubmit} className="form">
 //           <div className="row">
 //             <FormField
@@ -159,6 +159,8 @@ function StudentEnrollment() {
 
     if (!formData.studentName.trim()) {
       newErrors.studentName = "Name is required.";
+    } else if (!/^[a-zA-Z\s]+$/.test(formData.studentName)) {
+      newErrors.studentName = "Name must only contain letters.";
     }
     if (!formData.mobile.trim()) {
       newErrors.mobile = "Number is required.";
@@ -167,11 +169,13 @@ function StudentEnrollment() {
     }
     if (!formData.parentName.trim()) {
       newErrors.parentName = "Name is required.";
+    } else if (!/^[a-zA-Z\s]+$/.test(formData.studentName)) {
+      newErrors.studentName = "Name must only contain letters.";
     }
     if (!formData.parentMobile.trim()) {
-      newErrors.parentMobile = "Mobile number is required.";
+      newErrors.parentMobile = "Number is required.";
     } else if (!/^\d{10}$/.test(formData.parentMobile)) {
-      newErrors.parentMobile = "Mobile number must be 10 digits.";
+      newErrors.parentMobile = "Nobile number must be 10 digits.";
     }
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Invalid email address.";
@@ -227,27 +231,23 @@ function StudentEnrollment() {
       <div className="container-enrollment">
         <form onSubmit={handleSubmit} className="form">
           <div className="row">
-            
             <FormField
               label="Customer Name"
               placeholder="Student Name"
               name="studentName"
               value={formData.studentName}
               onChange={handleChange}
+              error={errors.studentName}
             />
-            {errors.studentName && (
-              <p className="error-message">{errors.studentName}</p>
-            )}
+
             <FormField
               label="Phone Number"
               placeholder="Phone Number"
               name="mobile"
               value={formData.mobile}
               onChange={handleChange}
+              error={errors.mobile}
             />
-            {errors.mobile && (
-              <p className="error-message">{errors.mobile}</p>
-            )}
           </div>
           <div className="row">
             <FormField
@@ -256,20 +256,17 @@ function StudentEnrollment() {
               name="parentName"
               value={formData.parentName}
               onChange={handleChange}
+              error={errors.parentName}
             />
-            {errors.parentName && (
-              <p className="error-message">{errors.parentName}</p>
-            )}
+
             <FormField
               label="Parent’s Mobile Number"
               placeholder="Phone"
               name="parentMobile"
               value={formData.parentMobile}
               onChange={handleChange}
+              error={errors.parentMobile}
             />
-            {errors.parentMobile && (
-              <p className="error-message">{errors.parentMobile}</p>
-            )}
           </div>
           <div className="row">
             <FormField
@@ -279,10 +276,8 @@ function StudentEnrollment() {
               value={formData.email}
               onChange={handleChange}
               fullWidth
+              error={errors.email}
             />
-            {errors.email && (
-              <p className="error-message">{errors.email}</p>
-            )}
           </div>
           <div className="button-container">
             <button type="submit" className="button">

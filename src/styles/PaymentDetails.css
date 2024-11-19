@@ -140,3 +140,132 @@
 	flex-direction: column; */
 	/* min-height: 100vh; */
 }
+
+/* Add to your PaymentDetails.css */
+
+/* Modal Styles */
+.modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	/* Background overlay */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 9999;
+	/* Make sure the modal is on top */
+}
+
+.modal-content {
+
+	padding: 20px;
+	border-radius: 8px;
+	width: 400px;
+	text-align: center;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content h3 {
+	margin-bottom: 20px;
+}
+
+.modal-content ul {
+	text-align: left;
+	margin-bottom: 20px;
+	margin-left: 95px;
+}
+
+.modal-content ul li {
+	margin-bottom: 10px;
+}
+
+.modal-buttons {
+	display: flex;
+	justify-content: space-between;
+}
+
+.modal-buttons button {
+	padding: 10px 20px;
+	border-radius: 8px;
+	cursor: pointer;
+}
+
+.modal-buttons button:first-child {
+	background-color: #184574;
+	color: white;
+}
+
+.modal-buttons button:last-child {
+	background-color: #f44336;
+	color: white;
+}
+
+ul {
+	display: block;
+	list-style-type: none;
+	/* Removes the dots */
+	margin-block-start: 1em;
+	margin-block-end: 1em;
+	margin-inline-start: 0px;
+	margin-inline-end: 0px;
+	padding-inline-start: 0px;
+	/* Optionally remove padding */
+	unicode-bidi: isolate;
+}
+
+.modal-content ul li {
+	margin-bottom: 10px;
+	/* Space between items */
+	display: flex;
+	/* Flex layout */
+	justify-content: space-between;
+	/* Even spacing between label and value */
+	gap: 0;
+	/* No gap needed for two columns */
+	align-items: center;
+	/* Vertically align items if needed */
+}
+
+.modal-content ul li span {
+	flex: 1;
+	/* Allow labels and values to adjust spacing */
+	text-align: left;
+	/* Ensure labels are left-aligned */
+}
+
+.modal-content ul li span.value {
+	text-align: right;
+	/* Align values to the right */
+}
+
+li span {
+	font-weight: bold;
+	/* Make the label bold */
+}
+
+.popup {
+	padding: 8px;
+	background: #184574;
+	color: white;
+	border: 1px solid;
+	border-radius: 8px;
+	cursor: pointer;
+}
+
+.modal-container {
+	background-color: #f0fdf4;
+	position: relative;
+}
+
+.close-popup {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	background: none;
+	border: none;
+	font-size: 16px;
+	cursor: pointer;
+}

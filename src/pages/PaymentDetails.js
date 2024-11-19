@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ProgressBar from "./ProgressBar/ProgressBar";
-import "./styles/PaymentDetails.css";
+import ProgressBar from "../components/ProgressBar/ProgressBar";
+import "../styles/PaymentDetails.css";
 
 const PaymentDetails = () => {
   const navigate = useNavigate();
@@ -16,6 +16,8 @@ const PaymentDetails = () => {
     finalPrice: "6000",
   });
 
+  const [showModal, setShowModal] = useState(false);
+  
   const handleChange = (event) => {
     setFormValues({
       ...formValues,
@@ -24,7 +26,17 @@ const PaymentDetails = () => {
   };
 
   const handleNext = () => {
+    debugger;
+    setShowModal(true);
+  };
+
+  const handleConfirm = () => {
+    setShowModal(false);
     navigate("/payment-status");
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
   };
 
   return (
@@ -32,11 +44,8 @@ const PaymentDetails = () => {
       <div className="payment-details-container">
         <div className="header-section">
           <div className="page-name">
-            <span>Payment Details</span>
+            <span>Student Details</span>
             <img src="/icons/cross-icon.svg" alt="Enrollment Icon" />
-          </div>
-          <div className="subtitle-details">
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do."
           </div>
         </div>
         <div className="progressbar">
@@ -45,7 +54,7 @@ const PaymentDetails = () => {
 
         <div className="row1">
           <div className="form-control">
-            <label>Plan Type</label>
+            <label>Tenure</label>
             <select
               name="planType"
               value={formValues.planType}
@@ -206,6 +215,8 @@ const PaymentDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Button Section */}
       <div className="button-section-details">
         <button
           className="back-button"
@@ -221,6 +232,53 @@ const PaymentDetails = () => {
           Next
         </button>
       </div>
+
+      {/* Modal for Confirmation */}
+      {showModal && (
+        <div className="modal">
+          <div className="modal-container">
+            <button className="close-popup" style={{textAlign:"right"}} onClick={handleClose}>
+            <img
+              src="/icons/cross-icon.svg"
+              alt="Enrollment Icon"
+              className="enrollmentIcon"
+            />
+            </button>
+            <div className="modal-content">
+              <h3>Confirm Your Details</h3>
+              <ul>
+                <li>
+                  <span>Plan Type:</span> <span>{formValues.planType}</span>
+                </li>
+                <li>
+                  <span>Validity:</span> <span>{formValues.validity}</span>
+                </li>
+                <li>
+                  <span>Subjects:</span>
+                  <span> {formValues.subjects}</span>
+                </li>
+                <li>
+                  <span>Class:</span> <span>{formValues.class}</span>
+                </li>
+                <li>
+                  <span>Board:</span> <span>{formValues.board}</span>
+                </li>
+                <li>
+                  <span>State:</span>
+                  <span>{formValues.state}</span>{" "}
+                </li>
+                <li>
+                  <span>Final Price:</span>
+                  <span>{formValues.finalPrice}</span>{" "}
+                </li>
+              </ul>
+              <button className="popup" onClick={handleConfirm}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

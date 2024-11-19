@@ -171,7 +171,7 @@ const StatusBadge = ({ status }) => {
 };
 
 const PaymentTable = () => {
-  const [showForm, setShowForm] = useState(false);
+  // const [showForm, setShowForm] = useState(false);
   const [payments, setPayments] = useState([]);
   const [copiedId, setCopiedId] = useState(null);
 
