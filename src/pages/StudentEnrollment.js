@@ -1,7 +1,5 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import "../styles/StudentEnrollment.css";
 import FormField from "../components/forms/FormField";
 
@@ -93,8 +91,9 @@ function StudentEnrollment() {
       );
       if (rawResponse.ok) {
         const responseData = await rawResponse.json();
-        console.log("Payment created successfully:", responseData);
-        navigate("/details-payment");
+
+        // navigate("/details-payment");
+        navigate("/details-payment", { state: { paymentData: responseData } });
       } else {
         const errorData = await rawResponse.json();
         console.error("Error creating payment:", errorData);

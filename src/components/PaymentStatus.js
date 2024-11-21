@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./styles/PaymentStatus.css";
 import ProgressBar from "./ProgressBar/ProgressBar";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 const PaymentStatus = () => {
   const [paymentEntries, setPaymentEntries] = useState([
     { paymentMethod: "", paymentId: "" },
   ]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   const steps = [
@@ -99,24 +101,47 @@ const PaymentStatus = () => {
               <div className="method-id-payment">
                 <div className="form-control" style={{ width: "420px" }}>
                   <label>Payment Method </label>
-                  <select
-                    value={entry.paymentMethod}
-                    onChange={(event) =>
-                      handlePaymentMethodChange(index, event)
-                    }
-                    className={
-                      entry.paymentMethod === ""
-                        ? "select-placeholder"
-                        : "select-filled"
-                    }
-                  >
-                    <option value="" hidden>
-                      Select
-                    </option>
-                    <option value="creditCard">Credit Card</option>
-                    <option value="debitCard">Debit Card</option>
-                    <option value="paypal">PayPal</option>
-                  </select>
+
+                  <FormControl sx={{ width: "100%", marginTop:"0px", }}>
+                    <Select
+                      value={entry.paymentMethod}
+                      onChange={(event) =>
+                        handlePaymentMethodChange(index, event)
+                      }
+                      IconComponent={() => (
+                        <img
+                          src={
+                            isDropdownOpen
+                              ? "/icons/uparrow-icon.svg"
+                              : "/icons/downarrow-icon.svg"
+                          }
+                          alt="Dropdown Icon"
+                          className="dropdown-icon"
+                        />
+                      )}
+                      onOpen={() => setIsDropdownOpen(true)} // Set open state
+                      onClose={() => setIsDropdownOpen(false)} // Set close state
+                      displayEmpty
+                      sx={{
+                        height: "40px",
+                        margin: "8px 0",
+                        borderRadius: "8px",
+                        border: "1px solid #94A3B8",
+                      }}
+                    >
+                      {/* Only display the placeholder when the dropdown is not open */}
+                      {!isDropdownOpen && (
+                        <MenuItem value="" disabled hidden>
+                          Select
+                        </MenuItem>
+                      )}
+
+                      {/* Display options only */}
+                      <MenuItem value="creditCard">Credit Card</MenuItem>
+                      <MenuItem value="debitCard">Debit Card</MenuItem>
+                      <MenuItem value="paypal">PayPal</MenuItem>
+                    </Select>
+                  </FormControl>
                 </div>
                 <div className="form-control" style={{ width: "420px" }}>
                   <label>Payment ID</label>

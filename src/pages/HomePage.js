@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import PaymentForm from "../components/forms/PaymentForm";
+import PaymentForm from "../components/forms/FormField";
 import PaymentTable from "./PaymentTable";
 import "../styles/HomePage.css";
 import StudentEnrollment from "./StudentEnrollment";
@@ -209,7 +209,7 @@ const PaymentDetails = () => {
           {paymentCreated && showTable && (
             <>
               <PaymentTable />
-              <div style={{ background: "#a8abad1a", height: "90px" }}>
+              <div style={{ background: "#f0fdf4", height: "90px" }}>
                 <button
                   className="createPaymentButton-table newPaymentButton"
                   onClick={() => {

@@ -269,3 +269,18 @@ li span {
 	font-size: 16px;
 	cursor: pointer;
 }
+
+select:focus option {
+	background-color: #FFFFFF;
+	color:#333333;
+	font-weight: bold;
+	outline: none;
+	border-color: inherit; /* Optional: Keep border color consistent */
+	box-shadow: none; 
+}
+select {
+    -webkit-appearance:button !important;
+        -moz-appearance:button !important;
+            appearance:button !important;
+    cursor: pointer;
+}
