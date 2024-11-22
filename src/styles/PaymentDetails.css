@@ -284,3 +284,7 @@ select {
             appearance:button !important;
     cursor: pointer;
 }
+
+.select-icon{
+	margin-right: 15px;
+}
