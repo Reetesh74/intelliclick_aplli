@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProgressBar from "../components/ProgressBar/ProgressBar";
 import "../styles/PaymentDetails.css";
+import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 const PaymentDetails = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const [isDropdownOpen, setDropdownOpen] = useState(false); // New state for dropdown menu
-  const [selectedSubjects, setSelectedSubjects] = useState([]);
+  const [selectedSubjects, setSelectedSubjects] = useState("");
   const [currentSubject, setCurrentSubject] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [formValues, setFormValues] = useState({
     period: "",
     name: "",
@@ -66,9 +67,9 @@ const PaymentDetails = () => {
         standards: formValues.standards,
         currency: formValues.currency,
       };
-      const toggleDropdown = () => {
-        setDropdownVisible((prev) => !prev);
-      };
+      // const toggleDropdown = () => {
+      //   setDropdownVisible((prev) => !prev);
+      // };
 
       requestData = {
         ...formValues,
@@ -137,67 +138,121 @@ const PaymentDetails = () => {
         </div>
         <div className="form-control">
           <label>Select Course</label>
-          <select
-            name="planType"
-            value={formValues.planType}
-            onChange={handleChange}
-            className={`${isOpen ? "open-dropdown" : ""} ${
-              formValues.state === "" ? "placeholder-selected" : ""
-            }`}
-          >
-            <option value="" hidden>
-              Select
-            </option>
-            <option value="plan1">Academic</option>
-          </select>
+          <FormControl>
+            <Select
+              name="plan1"
+              value={formValues.planType}
+              onChange={handleChange}
+              IconComponent={() => (
+                <img
+                  src={
+                    isDropdownOpen
+                      ? "/icons/select-uparrow-icon.svg"
+                      : "/icons/select-downarrow-icon.svg"
+                  }
+                  alt="Dropdown Icon"
+                  className="select-icon"
+                />
+              )}
+              onOpen={() => setIsDropdownOpen(true)} // Set open state
+              onClose={() => setIsDropdownOpen(false)} // Set close state
+              displayEmpty
+              sx={{
+                height: "40px",
+                width: "16.4vw",
+                margin: "8px 0",
+                borderRadius: "8px",
+                background: "#F8FAFC",
+                color:"#64748B"
+              }}
+              renderValue={(selected) => (!selected ? "Select" : selected)}
+            >
+              <MenuItem value="plan1">Academic</MenuItem>
+            </Select>
+          </FormControl>
         </div>
 
         <div className="row1">
           <div className="form-control">
             <label>Tenure</label>
-            <select
-              name="planType"
-              value={formValues.planType}
-              onChange={handleChange}
-              className={`${isOpen ? "open-dropdown" : ""} ${
-                formValues.state === "" ? "placeholder-selected" : ""
-              }`}
-            >
-              <option value="" hidden>
-                Select
-              </option>
-              <option value="monthly">Monthly</option>
-              <option value="yearly">Yearly</option>
-            </select>
+            <FormControl sx={{ width: "100%", marginTop: "0px" }}>
+              <Select
+                name="planType"
+                value={formValues.planType}
+                onChange={handleChange}
+                IconComponent={() => (
+                  <img
+                    src={
+                      isDropdownOpen
+                        ? "/icons/select-uparrow-icon.svg"
+                        : "/icons/select-downarrow-icon.svg"
+                    }
+                    alt="Dropdown Icon"
+                    className="select-icon"
+                  />
+                )}
+                onOpen={() => setIsDropdownOpen(true)} // Set open state
+                onClose={() => setIsDropdownOpen(false)} // Set close state
+                displayEmpty
+                sx={{
+                  height: "40px",
+                  width: "16.4vw",
+                  margin: "8px 0",
+                  borderRadius: "8px",
+                  background: "#F8FAFC",
+                  color: "#64748B",
+                }}
+                renderValue={(selected) => (!selected ? "Select" : selected)}
+              >
+                {/* Placeholder logic managed via renderValue */}
+                <MenuItem value="yearly">Yearly</MenuItem>
+                <MenuItem value="monthly">Monthly</MenuItem>
+              </Select>
+            </FormControl>
           </div>
 
           <div className="form-control">
             <label>Validity</label>
-            <select
-              name="validity"
-              value={formValues.validity}
-              onChange={handleChange}
-              style={{
-                outline: "none",
-                border: "1px solid #ccc",
-                boxShadow: "none",
-              }}
-              // className={formValues.state === "" ? "placeholder-selected" : ""}
-              className={`${isOpen ? "open-dropdown" : ""} ${
-                formValues.state === "" ? "placeholder-selected" : ""
-              }`}
-            >
-              <option value="" hidden>
-                Select
-              </option>
-              {getValidityOptions().map((option, index) => (
-                <option key={index} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
 
+            <FormControl sx={{ width: "100%", marginTop: "0px" }}>
+              <Select
+                name="validity"
+                value={formValues.validity}
+                onChange={handleChange}
+                IconComponent={() => (
+                  <img
+                    src={
+                      isDropdownOpen
+                        ? "/icons/select-uparrow-icon.svg"
+                        : "/icons/select-downarrow-icon.svg"
+                    }
+                    alt="Dropdown Icon"
+                    className="select-icon"
+                  />
+                  
+                )}
+                onOpen={() => setIsDropdownOpen(true)} // Set open state
+                onClose={() => setIsDropdownOpen(false)} // Set close state
+                displayEmpty
+                sx={{
+                  height: "40px",
+                  width: "16.4vw",
+                  margin: "8px 0",
+                  borderRadius: "8px",
+                  background: "#F8FAFC",
+                  color:"#64748B"
+                }}
+                renderValue={(selected) => (!selected ? "Select" : selected)}
+              >
+                {getValidityOptions().map((option, index) => (
+                  <MenuItem key={index} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </div>
+          
           {formValues.subjects === "individual" && (
             <div className="select-container">
               {/* Dropdown for selecting a subject */}
@@ -245,79 +300,161 @@ const PaymentDetails = () => {
 
           <div className="form-control">
             <label>Subjects</label>
-            <select
-              name="subjects"
-              value={formValues.subjects}
-              onChange={handleChange}
-              className={`${isOpen ? "open-dropdown" : ""} ${
-                formValues.state === "" ? "placeholder-selected" : ""
-              }`}
-            >
-              <option value="" hidden>
-                Select
-              </option>
-              <option value="individual">Individual</option>
-              <option value="all">All</option>
-            </select>
+
+            <FormControl sx={{ width: "100%", marginTop: "0px" }}>
+              <Select
+                name="subjects"
+                multiple
+                value={formValues.subjects}
+                onChange={handleChange}
+                IconComponent={() => (
+                  <img
+                    src={
+                      isDropdownOpen
+                        ? "/icons/select-uparrow-icon.svg"
+                        : "/icons/select-downarrow-icon.svg"
+                    }
+                    alt="Dropdown Icon"
+                    className="select-icon"
+                  />
+                )}
+                onOpen={() => setIsDropdownOpen(true)} // Set open state
+                onClose={() => setIsDropdownOpen(false)} // Set close state
+                displayEmpty
+                sx={{
+                  height: "40px",
+                  width: "16.4vw",
+                  margin: "8px 0",
+                  borderRadius: "8px",
+                 color:"#64748B",
+                  background: "#F8FAFC",
+                }}
+                renderValue={(selected) =>
+                  Array.isArray(selected) && selected.length === 0 ? "Select" : selected.join(", ")
+                }
+              >
+                <MenuItem value="all">All</MenuItem>
+                <MenuItem value="individual">Individual</MenuItem>
+              </Select>
+            </FormControl>
           </div>
         </div>
 
         <div className="row2">
           <div className="form-control">
             <label>Class</label>
-            <select
-              name="class"
-              value={formValues.class}
-              onChange={handleChange}
-              className={`${isOpen ? "open-dropdown" : ""} ${
-                formValues.state === "" ? "placeholder-selected" : ""
-              }`}
-            >
-              <option value="" hidden>
-                Select
-              </option>
-              <option value="10">Class 10</option>
-              <option value="12">Class 12</option>
-              <option value="undergraduate">Undergraduate</option>
-            </select>
+
+            <FormControl sx={{ width: "100%", marginTop: "0px" }}>
+              <Select
+                name="class"
+                value={formValues.class}
+                onChange={handleChange}
+                IconComponent={() => (
+                  <img
+                    src={
+                      isDropdownOpen
+                        ? "/icons/select-uparrow-icon.svg"
+                        : "/icons/select-downarrow-icon.svg"
+                    }
+                    alt="Dropdown Icon"
+                    className="select-icon"
+                  />
+                )}
+                onOpen={() => setIsDropdownOpen(true)} // Set open state
+                onClose={() => setIsDropdownOpen(false)} // Set close state
+                displayEmpty
+                sx={{
+                  height: "40px",
+                  width: "16.4vw",
+                  margin: "8px 0",
+                  borderRadius: "8px",
+                  color:"#64748B",
+                  background: "#F8FAFC",
+                }}
+                renderValue={(selected) => (!selected ? "Select" : selected)}
+              >
+                <MenuItem value="12">Class 12</MenuItem>
+                <MenuItem value="10">Class 10</MenuItem>
+              </Select>
+            </FormControl>
           </div>
 
           <div className="form-control">
             <label>Board</label>
-            <select
-              name="board"
-              value={formValues.board}
-              onChange={handleChange}
-              className={`${isOpen ? "open-dropdown" : ""} ${
-                formValues.state === "" ? "placeholder-selected" : ""
-              }`}
-            >
-              <option value="" hidden>
-                Select
-              </option>
-              <option value="cbse">CBSE</option>
-              <option value="icse">ICSE</option>
-              <option value="state">State Board</option>
-            </select>
+
+            <FormControl sx={{ width: "100%", marginTop: "0px" }}>
+              <Select
+                name="board"
+                value={formValues.board}
+                onChange={handleChange}
+                IconComponent={() => (
+                  <img
+                    src={
+                      isDropdownOpen
+                        ? "/icons/select-uparrow-icon.svg"
+                        : "/icons/select-downarrow-icon.svg"
+                    }
+                    alt="Dropdown Icon"
+                    className="select-icon"
+                  />
+                )}
+                onOpen={() => setIsDropdownOpen(true)} // Set open state
+                onClose={() => setIsDropdownOpen(false)} // Set close state
+                displayEmpty
+                sx={{
+                  height: "40px",
+                  width: "16.4vw",
+                  margin: "8px 0",
+                  borderRadius: "8px",
+                  color:"#64748B",
+                  background: "#F8FAFC",
+                }}
+                renderValue={(selected) => (!selected ? "Select" : selected)}
+              >
+                <MenuItem value="state">State Board</MenuItem>
+                <MenuItem value="icse">ICSE</MenuItem>
+                <MenuItem value="cbse">CBSE</MenuItem>
+              </Select>
+            </FormControl>
           </div>
 
           <div className="form-control">
             <label>State</label>
-            <select
-              name="state"
-              value={formValues.state}
-              onChange={handleChange}
-              className={`${isOpen ? "open-dropdown" : ""} ${
-                formValues.state === "" ? "placeholder-selected" : ""
-              }`}
-            >
-              <option value="" hidden>
-                Select
-              </option>
-              <option value="maharashtra">Maharashtra</option>
-              <option value="karnataka">Karnataka</option>
-              <option value="delhi">Delhi</option>
-            </select>
+
+            <FormControl sx={{ width: "100%", marginTop: "0px" }}>
+              <Select
+                name="state"
+                value={formValues.state}
+                onChange={handleChange}
+                IconComponent={() => (
+                  <img
+                    src={
+                      isDropdownOpen
+                        ? "/icons/select-uparrow-icon.svg"
+                        : "/icons/select-downarrow-icon.svg"
+                    }
+                    alt="Dropdown Icon"
+                    className="select-icon"
+                  />
+                )}
+                onOpen={() => setIsDropdownOpen(true)} // Set open state
+                onClose={() => setIsDropdownOpen(false)} // Set close state
+                displayEmpty
+                sx={{
+                  height: "40px",
+                  width: "16.4vw",
+                  margin: "8px 0",
+                  borderRadius: "8px",
+                  background: "#F8FAFC",
+                  color:"#64748B"
+                }}
+                renderValue={(selected) => (!selected ? "Select" : selected)}
+              >
+                <MenuItem value="maharashtra">Maharashtra</MenuItem>
+                <MenuItem value="karnataka">Karnataka</MenuItem>
+                <MenuItem value="delhi">Delhi</MenuItem>
+              </Select>
+            </FormControl>
           </div>
         </div>
 
