@@ -16,7 +16,9 @@
     "react-router-dom": "^6.28.0",
     "react-scripts": "5.0.1",
     "react-select": "^5.8.3",
+    "react-slick": "^0.30.2",
     "react-step-progress-bar": "^1.0.3",
+    "slick-carousel": "^1.8.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

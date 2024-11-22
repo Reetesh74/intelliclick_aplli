@@ -251,8 +251,9 @@ const PaymentDetails = () => {
                 ))}
               </Select>
             </FormControl>
+            
           </div>
-          
+          {console.log("ssssssssssssssssssssssssssss"+formValues.subjects)}
           {formValues.subjects === "individual" && (
             <div className="select-container">
               {/* Dropdown for selecting a subject */}

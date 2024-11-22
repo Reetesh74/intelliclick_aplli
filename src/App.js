@@ -7,6 +7,8 @@ import CreatePayment from "./pages/CreatePayment";
 import PaymentTable from "./pages/PaymentTable";
 import HomePage from "./pages/HomePage";
 import DraftDetails from "./pages/DraftDetails"
+//admin
+import CreateCourse from "./pages/Admin/CreateCoursePage";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/create-payment" element={<CreatePayment />} />
         <Route path="/payment-details" element={<PaymentTable />} />
         <Route path="/draft-details" element={<DraftDetails />} />
+        {/* admin routes */}
+        <Route path="/create-course" element={<CreateCourse />} />
       </Routes>
     </Router>
   );

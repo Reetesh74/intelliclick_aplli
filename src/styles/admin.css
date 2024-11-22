@@ -1,0 +1,29 @@
+/* .box-input{
+    background-color: brown;
+    border-radius: 8px;
+} */
+
+.box-input .MuiOutlinedInput {
+    border-radius: 20px; /* Apply border-radius to the outer wrapper */
+  }
+  
+  .box-input .MuiInputBase-input {
+    border-radius: 20px; /* Apply border-radius to the input field */
+  }
+
+  .admin-container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .drop-row1,.drop-row2,.drop-row3{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+  }
+  .box-input{
+    width: 15vw;
+    margin: 20px;
+  }
