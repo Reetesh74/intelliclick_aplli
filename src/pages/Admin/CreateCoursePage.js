@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Autocomplete,
   TextField,
@@ -7,8 +7,18 @@ import {
   Button,
   Menu,
   MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import "../../styles/admin.css";
+import {
+  getStateData,
+  getSubjectData,
+  addOrUpdateSubject,
+} from "../../utils/api";
+
 const SearchableDropdown = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState(["Acadmic", "Jee", "Neet"]);
@@ -19,44 +29,103 @@ const SearchableDropdown = () => {
   const [selectedValidity, setSelectedValidity] = useState(null);
   const [validity, setValidity] = useState(["Life time validity"]);
   const [selectedSubject, setSelectedSubject] = useState(null);
-  const [subjects, setSubjects] = useState(["Math", "Science"]);
+  const [subjects, setSubjects] = useState([]);
   const [selectedState, setSelectedState] = useState(null);
-  const [states, setStates] = useState(["Mp", "Up", "Bihar"]);
+  const [states, setStates] = useState([]);
   const [selectedPrice, setSelectedPrice] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null); // For handling the open state of the menu
-  const [selectedOption, setSelectedOption] = useState(null); // For storing the selected option
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newCourseName, setNewCourseName] = useState("");
+  const [newSubjectName, setNewSubjectName] = useState("");
+  const [newMinAmount, setNewMinAmount] = useState("");
+  const [newMaxAmount, setNewMaxAmount] = useState("");
+  const [isCourseDialogOpen, setIsCourseDialogOpen] = useState(false); // New state for Add Course dialog
+  const [isSubjectDialogOpen, setIsSubjectDialogOpen] = useState(false); // New state for Add Subject dialog
+  const [couponDetails, setCouponDetails] = useState("");
+  useEffect(() => {
+    const fetchStates = async () => {
+      try {
+        const stateData = await getStateData("IN");
+        if (stateData && typeof stateData === "object") {
+          const stateNames = Object.keys(stateData);
+          setStates(stateNames);
+        } else {
+          console.error("State data not found or malformed response");
+        }
+      } catch (error) {
+        console.error("Error fetching state data:", error);
+      }
+    };
 
-  // Open the menu
+    fetchStates();
+  }, []);
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const subjectData = await getSubjectData();
+        if (subjectData && Array.isArray(subjectData)) {
+          const subjectNames = subjectData.map((subject) => subject.name);
+          setSubjects(subjectNames);
+        } else {
+          console.error("Subject data not found or malformed response");
+        }
+      } catch (error) {
+        console.error("Error fetching subject data:", error);
+      }
+    };
+
+    fetchSubjects();
+  }, []);
+  const handleAddNewSubject = async () => {
+    if (newSubjectName && newMinAmount && newMaxAmount) {
+      try {
+        // Call the API function to add or update the subject
+        const response = await addOrUpdateSubject(
+          newSubjectName,
+          newMinAmount,
+          newMaxAmount
+        );
+        if (response) {
+          setSubjects((prevSubjects) => [...prevSubjects, newSubjectName]);
+          setSelectedSubject(newSubjectName);
+          handleDialogClose("subject");
+        }
+      } catch (error) {
+        console.error("Error adding/updating subject:", error);
+        alert("Failed to add subject. Please try again.");
+      }
+    } else {
+      alert("Please fill all fields.");
+    }
+  };
+
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  // Close the menu
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  // Handle the button click to select Discount or Percentage
   const handleButtonClick = (option) => {
     setSelectedOption(option);
-    handleMenuClose(); // Close the menu after selecting
+    handleMenuClose();
   };
 
-  // Handle the change for price type (Fixed or Range)
   const handlePriceChange = (event, value) => {
     setSelectedPrice(value); // Update selected price type
   };
 
-  // Handle the change for states
-  const handleStateChange = (event, value) => {
-    if (value === "Add State") {
-      handleAddState(); // Trigger custom action for adding a state
+  const handleCategoryChange = (event, value) => {
+    if (value === "Add Course") {
+      setIsCourseDialogOpen(true); // Open the Add Course dialog
     } else {
-      setSelectedState(value); // Update selected state
+      setSelectedCategory(value);
     }
   };
 
-  // Add a new state to the list
   const handleAddState = () => {
     const newState = prompt("Enter the name of the new state:");
     if (newState && !states.includes(newState)) {
@@ -67,16 +136,14 @@ const SearchableDropdown = () => {
     }
   };
 
-  // Handle the change for subjects (similar to other dropdowns)
   const handleSubjectChange = (event, value) => {
     if (value === "Custom Subject") {
-      handleAddSubject(); // Trigger custom action for adding a subject
+      setIsDialogOpen(true); // Open the dialog box for adding a custom subject
     } else {
-      setSelectedSubject(value);
+      setSelectedSubject(value); // Update selected subject
     }
   };
 
-  // Handle the change for boards (similar to other dropdowns)
   const handleBoardChange = (event, value) => {
     if (value === "Add Board") {
       handleAddBoard(); // Trigger custom action for adding a board
@@ -84,19 +151,14 @@ const SearchableDropdown = () => {
       setSelectedBoard(value); // Update selected board
     }
   };
-
-  // Add a new subject to the list
-  const handleAddSubject = () => {
-    const newSubject = prompt("Enter the name of the new subject:");
-    if (newSubject && !subjects.includes(newSubject)) {
-      setSubjects((prevSubjects) => [...prevSubjects, newSubject]); // Add new subject to list
-      setSelectedSubject(newSubject);
-    } else if (newSubject) {
-      alert("This subject already exists!");
+  const handleStateChange = (event, value) => {
+    if (value === "Add State") {
+      handleAddState(); // Trigger the logic for adding a new state
+    } else {
+      setSelectedState(value); // Update selected state
     }
   };
 
-  // Add a new board to the list
   const handleAddBoard = () => {
     const newBoard = prompt("Enter the name of the new board:");
     if (newBoard && !boards.includes(newBoard)) {
@@ -107,24 +169,30 @@ const SearchableDropdown = () => {
     }
   };
 
-  // Handle other fields (Category, Class, Validity)
-  const handleCategoryChange = (event, value) => {
-    if (value === "Add Course") {
-      handleAddCourse(); // Trigger custom action
-    } else {
-      setSelectedCategory(value);
+  const handleDialogClose = (dialogType) => {
+    if (dialogType === "subject") {
+      setIsDialogOpen(false);
+    } else if (dialogType === "course") {
+      setIsCourseDialogOpen(false);
+    } else if (dialogType === "subjectAdd") {
+      setIsSubjectDialogOpen(false);
     }
+
+    // Reset input fields
+    setNewCourseName("");
+    setNewSubjectName("");
+    setNewMinAmount("");
+    setNewMaxAmount("");
   };
 
-  // Add a new course to the list
+  // Handle adding a new course
   const handleAddCourse = () => {
-    const newCourse = prompt("Enter the name of the new course:");
-    if (newCourse && !categories.includes(newCourse)) {
-      setCategories((prevCategories) => [...prevCategories, newCourse]);
-      setSelectedCategory(newCourse);
-    } else if (newCourse) {
-      alert("This course already exists!");
+    if (newCourseName && !categories.includes(newCourseName)) {
+      setCategories((prevCategories) => [...prevCategories, newCourseName]);
+      setSelectedCategory(newCourseName);
+    } else if (newCourseName) {
     }
+    handleDialogClose("course"); // Close dialog after adding
   };
 
   const handleValidityChange = (event, value) => {
@@ -168,51 +236,33 @@ const SearchableDropdown = () => {
       {/* Category Dropdown */}
       <div className="admin-container">
         <div className="drop-row1">
-          <Autocomplete
-            options={["Add Course", ...categories]}
-            onChange={handleCategoryChange}
+          <TextField
+            label="Course Name"
+            placeholder="Enter or Add Course"
             value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)} // Handle text input change
             className="box-input"
-            // sx={{ width: 300 }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                placeholder="Search or Add Course"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
-                  },
-                }}
-              />
-            )}
-            renderOption={(props, option) => (
-              <li {...props}>
-                {option === "Add Course" ? (
-                  <Typography color="primary" fontWeight="bold">
-                    + {option}
-                  </Typography>
-                ) : (
-                  option
-                )}
-              </li>
-            )}
-            isOptionEqualToValue={(option, value) =>
-              option === value || value === "Add Course"
-            }
-            filterOptions={(options, state) => options}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+              },
+            }}
           />
-          {/* Class Dropdown */}
           <Autocomplete
             options={["Add Class", ...classes]}
             onChange={handleClassChange}
             value={selectedClass}
             className="box-input"
             renderInput={(params) => (
-              <TextField {...params} placeholder="Search or Add Class"  sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                },
-              }}/>
+              <TextField
+                {...params}
+                placeholder="Search or Add Class"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             )}
             renderOption={(props, option) => (
               <li {...props}>
@@ -231,16 +281,20 @@ const SearchableDropdown = () => {
             filterOptions={(options, state) => options}
           />
           <Autocomplete
-            options={["Add State", ...states]}
+            options={["Add State", ...states]} // Dynamically add "Add State" option at the top
             onChange={handleStateChange}
             value={selectedState}
             className="box-input"
             renderInput={(params) => (
-              <TextField {...params} placeholder="Search or Add State"  sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                },
-              }}/>
+              <TextField
+                {...params}
+                placeholder="Search or Add State"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             )}
             renderOption={(props, option) => (
               <li {...props}>
@@ -267,11 +321,15 @@ const SearchableDropdown = () => {
             value={selectedBoard}
             className="box-input"
             renderInput={(params) => (
-              <TextField {...params} placeholder="Search or Add Board"  sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                },
-              }}/>
+              <TextField
+                {...params}
+                placeholder="Search or Add Board"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             )}
             renderOption={(props, option) => (
               <li {...props}>
@@ -296,11 +354,15 @@ const SearchableDropdown = () => {
             value={selectedValidity}
             className="box-input"
             renderInput={(params) => (
-              <TextField {...params} placeholder="Select or Add Validity"  sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                },
-              }}/>
+              <TextField
+                {...params}
+                placeholder="Select or Add Validity"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             )}
             renderOption={(props, option) => (
               <li {...props}>
@@ -318,18 +380,22 @@ const SearchableDropdown = () => {
             }
             filterOptions={(options, state) => options}
           />
-          {/* Subject Dropdown */}
+
           <Autocomplete
-            options={["Custom Subject", ...subjects]} // Add "Custom Subject" at the top of options
+            options={["Custom Subject", ...subjects]}
             onChange={handleSubjectChange} // Handle selection
             value={selectedSubject} // Controlled value
             className="box-input"
             renderInput={(params) => (
-              <TextField {...params} placeholder="Select or Add Subject"  sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                },
-              }}/>
+              <TextField
+                {...params}
+                placeholder="Select or Add Subject"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                  },
+                }}
+              />
             )}
             renderOption={(props, option) => (
               <li {...props}>
@@ -347,6 +413,49 @@ const SearchableDropdown = () => {
             }
             filterOptions={(options, state) => options}
           />
+
+          {/* Dialog for adding a new subject */}
+          <Dialog open={isDialogOpen} onClose={handleDialogClose}>
+            <DialogTitle>Add New Subject</DialogTitle>
+            <DialogContent>
+              <TextField
+                autoFocus
+                margin="dense"
+                label="Subject Name"
+                type="text"
+                fullWidth
+                value={newSubjectName}
+                onChange={(e) => setNewSubjectName(e.target.value)}
+              />
+              <TextField
+                margin="dense"
+                label="Minimum Amount"
+                type="number"
+                fullWidth
+                value={newMinAmount}
+                onChange={(e) => setNewMinAmount(e.target.value)}
+              />
+              <TextField
+                margin="dense"
+                label="Maximum Amount"
+                type="number"
+                fullWidth
+                value={newMaxAmount}
+                onChange={(e) => setNewMaxAmount(e.target.value)}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={() => handleDialogClose("subject")}
+                color="secondary"
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleAddNewSubject} color="primary">
+                Add
+              </Button>
+            </DialogActions>
+          </Dialog>
         </div>
         <div className="drop-row3">
           <TextField
@@ -355,67 +464,26 @@ const SearchableDropdown = () => {
             variant="outlined"
             className="box-input"
             sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                },
-              }}
-          />
-          <Autocomplete
-            options={["Fixed Price", "Range Price"]}
-            onChange={handlePriceChange}
-            value={selectedPrice}
-            className="box-input"
-            renderInput={(params) => (
-              <TextField {...params} placeholder="Select Price Type"  sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                },
-              }} />
-            )}
-            renderOption={(props, option) => (
-              <li {...props}>
-                <Typography fontWeight="bold">{option}</Typography>
-              </li>
-            )}
-            isOptionEqualToValue={(option, value) => option === value}
-            filterOptions={(options, state) => options}
-          />
-          <Autocomplete
-            options={["Select Coupon Type"]}
-            value={selectedOption || ""}
-            onChange={(event, newValue) => setSelectedOption(newValue)}
-            className="box-input"
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                onClick={handleMenuOpen} // Open menu when clicked
-                placeholder="Select Coupon Type"
-                sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "8px",
-                    },
-                  }}
-              />
-            )}
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+              },
+            }}
           />
 
           {/* Custom Menu with Buttons */}
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)} // Open the menu if anchorEl is set
-            onClose={handleMenuClose} // Close the menu
-          >
-            <MenuItem onClick={() => handleButtonClick("Discount")}>
-              <Button variant="contained" color="primary" fullWidth>
-                Discount
-              </Button>
-            </MenuItem>
-            <MenuItem onClick={() => handleButtonClick("Percentage")}>
-              <Button variant="contained" color="secondary" fullWidth>
-                Percentage
-              </Button>
-            </MenuItem>
-          </Menu>
+          <TextField
+            label="Coupon Details"
+            placeholder="Enter coupon details"
+            variant="outlined"
+            className="box-input"
+            value={couponDetails}
+            onChange={(e) => setCouponDetails(e.target.value)}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+              },
+            }}
+          />
         </div>
       </div>
     </Box>
