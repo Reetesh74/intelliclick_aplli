@@ -17,13 +17,15 @@ import {
   getStateData,
   getSubjectData,
   addOrUpdateSubject,
+  createOrUpdatePlan,
+  getClassData,
 } from "../../utils/api";
 
 const SearchableDropdown = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState(["Acadmic", "Jee", "Neet"]);
   const [selectedClass, setSelectedClass] = useState(null);
-  const [classes, setClasses] = useState(["1", "2", "3", "4"]);
+  const [classes, setClasses] = useState([]);
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [boards, setBoards] = useState(["CBSE", "ICSE", "MP Board"]);
   const [selectedValidity, setSelectedValidity] = useState(null);
@@ -43,6 +45,25 @@ const SearchableDropdown = () => {
   const [isCourseDialogOpen, setIsCourseDialogOpen] = useState(false); // New state for Add Course dialog
   const [isSubjectDialogOpen, setIsSubjectDialogOpen] = useState(false); // New state for Add Subject dialog
   const [couponDetails, setCouponDetails] = useState("");
+  const [planDetails, setPlanDetails] = useState({
+    name: "",
+    planType: "fixed",
+    period: "yearly",
+    currency: "INR",
+    interval: 1,
+    board: "",
+    standards: [],
+    productIds: [],
+    coupon: "",
+  });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setPlanDetails((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   useEffect(() => {
     const fetchStates = async () => {
       try {
@@ -62,12 +83,29 @@ const SearchableDropdown = () => {
   }, []);
 
   useEffect(() => {
+    const fetchClass = async () => {
+      try {
+        const classData = await getClassData();
+        if (classData && Array.isArray(classData)) {
+          setClasses(classData); // Store full class objects (with id and name)
+          console.log(classData);
+        } else {
+          console.error("Class data is not in the expected format");
+        }
+      } catch (error) {
+        console.error("Error fetching class data:", error);
+      }
+    };
+
+    fetchClass();
+  }, []);
+
+  useEffect(() => {
     const fetchSubjects = async () => {
       try {
         const subjectData = await getSubjectData();
         if (subjectData && Array.isArray(subjectData)) {
-          const subjectNames = subjectData.map((subject) => subject.name);
-          setSubjects(subjectNames);
+          setSubjects(subjectData); // Store full objects, not just names
         } else {
           console.error("Subject data not found or malformed response");
         }
@@ -78,6 +116,7 @@ const SearchableDropdown = () => {
 
     fetchSubjects();
   }, []);
+
   const handleAddNewSubject = async () => {
     if (newSubjectName && newMinAmount && newMaxAmount) {
       try {
@@ -93,11 +132,46 @@ const SearchableDropdown = () => {
           handleDialogClose("subject");
         }
       } catch (error) {
-        console.error("Error adding/updating subject:", error);
         alert("Failed to add subject. Please try again.");
       }
     } else {
       alert("Please fill all fields.");
+    }
+  };
+
+  const handleAddPlan = async () => {
+    if (!selectedSubject) {
+      alert("Please select a subject before submitting the plan.");
+      return;
+    }
+
+    try {
+      // Ensure the selected subject ID is in the productIds
+      if (planDetails.productIds.length === 0) {
+        const selectedSubjectData = subjects.find(
+          (subject) => subject.name === selectedSubject
+        );
+        const selectedSubjectId = selectedSubjectData
+          ? selectedSubjectData.id
+          : null;
+
+        if (selectedSubjectId) {
+          setPlanDetails((prevState) => ({
+            ...prevState,
+            productIds: [selectedSubjectId], // Update productIds in planDetails
+          }));
+        } else {
+          alert("Invalid subject selected.");
+          return;
+        }
+      }
+
+      // Now, call the API function to submit the plan
+      const response = await createOrUpdatePlan(planDetails);
+
+      // Handle success
+    } catch (error) {
+      alert("An error occurred while creating/updating the plan.");
     }
   };
 
@@ -137,10 +211,20 @@ const SearchableDropdown = () => {
   };
 
   const handleSubjectChange = (event, value) => {
-    if (value === "Custom Subject") {
+    console.log("Selected value:", value);
+
+    if (value.name === "Custom Subject") {
       setIsDialogOpen(true); // Open the dialog box for adding a custom subject
+    } else if (value?._id) {
+      setSelectedSubject(value); // Update selected subject with the name and ID
+      console.log(value._id);
+      // Update planDetails with the selected subject's ID
+      setPlanDetails((prevState) => ({
+        ...prevState,
+        productIds: [value._id], // Use selected ID
+      }));
     } else {
-      setSelectedSubject(value); // Update selected subject
+      console.warn("No matching subject found:", value);
     }
   };
 
@@ -148,9 +232,15 @@ const SearchableDropdown = () => {
     if (value === "Add Board") {
       handleAddBoard(); // Trigger custom action for adding a board
     } else {
-      setSelectedBoard(value); // Update selected board
+      // Update selected board state and planDetails.board directly
+      setSelectedBoard(value); // Update the selectedBoard state
+      setPlanDetails((prevState) => ({
+        ...prevState,
+        board: value, // Ensure the selected board value is set here
+      }));
     }
   };
+
   const handleStateChange = (event, value) => {
     if (value === "Add State") {
       handleAddState(); // Trigger the logic for adding a new state
@@ -214,10 +304,17 @@ const SearchableDropdown = () => {
   };
 
   const handleClassChange = (event, value) => {
-    if (value === "Add Class") {
-      handleAddClass();
-    } else {
+  
+    if (value?.name === "Add Class") {
+      handleAddClass(); // Open the dialog to add a new class
+    } else if (value?._id) {
       setSelectedClass(value);
+      setPlanDetails((prevState) => ({
+        ...prevState,
+        standards: [value._id], // Use the selected class _id
+      }));
+    } else {
+      console.error("Selected class not valid:", value);
     }
   };
 
@@ -237,10 +334,10 @@ const SearchableDropdown = () => {
       <div className="admin-container">
         <div className="drop-row1">
           <TextField
-            label="Course Name"
             placeholder="Enter or Add Course"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)} // Handle text input change
+            name="name"
+            value={planDetails.name} // Linked to planDetails.name
+            onChange={handleChange} // Update name in planDetails
             className="box-input"
             sx={{
               "& .MuiOutlinedInput-root": {
@@ -248,40 +345,43 @@ const SearchableDropdown = () => {
               },
             }}
           />
+         <Autocomplete
+  options={[...classes, { name: "Add Class" }]} // Add "Add Class" dynamically
+  onChange={handleClassChange}
+  value={selectedClass}
+  className="box-input"
+  getOptionLabel={(option) => option?.name || ""} // Graceful handling of null/undefined
+  renderInput={(params) => (
+    <TextField
+      {...params}
+      placeholder="Search or Add Class"
+      sx={{
+        "& .MuiOutlinedInput-root": {
+          borderRadius: "8px",
+        },
+      }}
+    />
+  )}
+  renderOption={(props, option) => (
+    <li {...props}>
+      {option.name === "Add Class" ? (
+        <Typography color="primary" fontWeight="bold">
+          + {option.name}
+        </Typography>
+      ) : (
+        option.name
+      )}
+    </li>
+  )}
+  isOptionEqualToValue={(option, value) => {
+    if (!option || !value) return false;
+    return option.id === value.id || option.name === value.name;
+  }}
+/>
+
+
           <Autocomplete
-            options={["Add Class", ...classes]}
-            onChange={handleClassChange}
-            value={selectedClass}
-            className="box-input"
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                placeholder="Search or Add Class"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
-                  },
-                }}
-              />
-            )}
-            renderOption={(props, option) => (
-              <li {...props}>
-                {option === "Add Class" ? (
-                  <Typography color="primary" fontWeight="bold">
-                    + {option}
-                  </Typography>
-                ) : (
-                  option
-                )}
-              </li>
-            )}
-            isOptionEqualToValue={(option, value) =>
-              option === value || value === "Add Class"
-            }
-            filterOptions={(options, state) => options}
-          />
-          <Autocomplete
-            options={["Add State", ...states]} // Dynamically add "Add State" option at the top
+            options={["Add State", ...states]}
             onChange={handleStateChange}
             value={selectedState}
             className="box-input"
@@ -380,10 +480,9 @@ const SearchableDropdown = () => {
             }
             filterOptions={(options, state) => options}
           />
-
           <Autocomplete
-            options={["Custom Subject", ...subjects]}
-            onChange={handleSubjectChange} // Handle selection
+            options={subjects} // Pass the cleaned subjects array
+            onChange={handleSubjectChange}
             value={selectedSubject} // Controlled value
             className="box-input"
             renderInput={(params) => (
@@ -399,19 +498,26 @@ const SearchableDropdown = () => {
             )}
             renderOption={(props, option) => (
               <li {...props}>
-                {option === "Custom Subject" ? (
+                {option.name === "Custom Subject" ? (
                   <Typography color="primary" fontWeight="bold">
-                    + {option}
+                    + {option.name}{" "}
+                    {/* Display "Add Custom Subject" with a "+" */}
                   </Typography>
                 ) : (
-                  option
+                  option.name // Display the subject name normally
                 )}
               </li>
             )}
-            isOptionEqualToValue={(option, value) =>
-              option === value || value === "Custom Subject"
+            getOptionLabel={
+              (option) => (option.name ? option.name : option) // Display subject name or "Custom Subject"
             }
-            filterOptions={(options, state) => options}
+            isOptionEqualToValue={(option, value) =>
+              option?._id === value?._id || value === "Custom Subject"
+            }
+            filterOptions={(options) => [
+              { _id: null, name: "Custom Subject" }, // Add "Custom Subject" dynamically as the first option
+              ...options,
+            ]}
           />
 
           {/* Dialog for adding a new subject */}
@@ -472,12 +578,12 @@ const SearchableDropdown = () => {
 
           {/* Custom Menu with Buttons */}
           <TextField
-            label="Coupon Details"
             placeholder="Enter coupon details"
             variant="outlined"
             className="box-input"
-            value={couponDetails}
-            onChange={(e) => setCouponDetails(e.target.value)}
+            name="coupon"
+            value={planDetails.coupon} // Linked to planDetails.name
+            onChange={handleChange} // Update name in planDetails
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "8px",
@@ -486,6 +592,14 @@ const SearchableDropdown = () => {
           />
         </div>
       </div>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleAddPlan}
+        sx={{ marginTop: "16px" }}
+      >
+        Submit Plan
+      </Button>
     </Box>
   );
 };
