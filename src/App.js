@@ -6,9 +6,12 @@ import StudentEnrollment from "./pages/StudentEnrollment";
 import CreatePayment from "./pages/CreatePayment";
 import PaymentTable from "./pages/PaymentTable";
 import HomePage from "./pages/HomePage";
-import DraftDetails from "./pages/DraftDetails"
+import DraftDetails from "./pages/DraftDetails";
 //admin
 import CreateCourse from "./pages/Admin/CreateCoursePage";
+// coupon
+import CouponPage from "./pages/coupon/couponPage";
+import CouponDetail from "./pages/coupon/couponDetail";
 
 function App() {
   return (
@@ -23,6 +26,8 @@ function App() {
         <Route path="/draft-details" element={<DraftDetails />} />
         {/* admin routes */}
         <Route path="/create-course" element={<CreateCourse />} />
+        <Route path="/create-coupon" element={<CouponPage />} />
+        <Route path="/details-coupon" element={<CouponDetail />} />
       </Routes>
     </Router>
   );
