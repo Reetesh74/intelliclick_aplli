@@ -2,10 +2,9 @@ const BASE_URL =
   "https://intelliclick-server-dev-1082184296521.us-central1.run.app/api";
 
 // Function to retrieve the token dynamically
-const getToken = () => {
-  return localStorage.getItem("authToken");
-};
+const getToken = () => localStorage.getItem("authToken");
 
+// Generic function to fetch with authentication and improved response handling
 const fetchWithAuth = async (endpoint, options = {}) => {
   const token = getToken();
   if (!token) {
@@ -24,45 +23,68 @@ const fetchWithAuth = async (endpoint, options = {}) => {
     headers,
   });
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+  let data;
+  try {
+    data = await response.json();
+  } catch (error) {
+    throw new Error(`Failed to parse JSON response: ${error.message}`);
   }
 
-  return response.json();
+  // Return full response object including status and ok
+  return {
+    status: response.status,
+    ok: response.ok,
+    data,
+  };
 };
 
-// Updated API methods using the generic fetchWithAuth
-export const getAllPlans = (planType) => {
+// Helper function for error handling in API functions
+const handleResponse = (response, errorMessage) => {
+  if (!response.ok) {
+    const error = response.data?.message || "Unknown error";
+    throw new Error(`${errorMessage}: ${error}`);
+  }
+  return response.data;
+};
+
+// API functions using the improved fetchWithAuth
+
+export const getAllPlans = async (planType) => {
   const endpoint = `/plan/read/get-all-plans?planType=${planType}`;
-  return fetchWithAuth(endpoint);
+  const response = await fetchWithAuth(endpoint);
+  return handleResponse(response, "Failed to fetch plans");
 };
 
-export const getStateData = (countryCode) => {
+export const getStateData = async (countryCode) => {
   const endpoint = `/user/read/get-state-data?country=${countryCode}`;
-  return fetchWithAuth(endpoint);
+  const response = await fetchWithAuth(endpoint);
+  return handleResponse(response, "Failed to fetch state data");
 };
 
-export const getClassData = () => {
+export const getClassData = async () => {
   const endpoint = `/standard/read/get-all`;
-  return fetchWithAuth(endpoint);
+  const response = await fetchWithAuth(endpoint);
+  return handleResponse(response, "Failed to fetch class data");
 };
 
-export const getSubjectData = () => {
+export const getSubjectData = async () => {
   const endpoint = `/subject/read/get-all-subjects`;
-  return fetchWithAuth(endpoint);
+  const response = await fetchWithAuth(endpoint);
+  return handleResponse(response, "Failed to fetch subject data");
 };
 
-export const createOrUpdateStandard = (standardDetails) => {
+export const createOrUpdateStandard = async (standardDetails) => {
   const endpoint = `/standard/write/insert-or-update`;
-  return fetchWithAuth(endpoint, {
+  const response = await fetchWithAuth(endpoint, {
     method: "POST",
     body: JSON.stringify(standardDetails),
   });
+  return response;
 };
 
-export const addOrUpdateSubject = (subjectName, minAmount, maxAmount) => {
+export const addOrUpdateSubject = async (subjectName, minAmount, maxAmount) => {
   const endpoint = `/subject/write/insert-or-update`;
-  return fetchWithAuth(endpoint, {
+  const response = await fetchWithAuth(endpoint, {
     method: "POST",
     body: JSON.stringify({
       name: subjectName,
@@ -70,20 +92,34 @@ export const addOrUpdateSubject = (subjectName, minAmount, maxAmount) => {
       maxAmount,
     }),
   });
+  return handleResponse(response, "Failed to create or update subject");
 };
 
-export const createOrUpdatePlan = (planDetails) => {
+export const createOrUpdatePlan = async (planDetails) => {
   const endpoint = `/plan/write/create-or-update`;
-  return fetchWithAuth(endpoint, {
+  const response = await fetchWithAuth(endpoint, {
     method: "POST",
     body: JSON.stringify(planDetails),
   });
+  return handleResponse(response, "Failed to create or update plan");
 };
 
-export const deleteStandard = (standardId) => {
+export const deleteStandard = async (standardId) => {
   const endpoint = `/standard/delete/delete-standard`;
-  return fetchWithAuth(endpoint, {
+  const response = await fetchWithAuth(endpoint, {
     method: "DELETE",
     body: JSON.stringify({ id: standardId }),
   });
+
+  return response;
 };
+
+export const deleteSubject = async (subjectId)=>{
+  const endpoint = `/subject/delete/delete-subject`;
+  const response = await fetchWithAuth(endpoint,{
+    method:"DELETE",
+    body:JSON.stringify({id:subjectId})
+  });
+  
+  return response;
+}

@@ -20,6 +20,8 @@ import {
   createOrUpdatePlan,
   getClassData,
   createOrUpdateStandard,
+  deleteStandard,
+  deleteSubject,
 } from "../../utils/api";
 
 const SearchableDropdown = () => {
@@ -67,6 +69,37 @@ const SearchableDropdown = () => {
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleDeleteClass = async (classId) => {
+    try {
+      const response = await deleteStandard(classId);
+      if (response.status === 200) {
+        setClasses((prevClasses) =>
+          prevClasses.filter((cls) => cls._id !== classId)
+        );
+      } else {
+        alert("Failed to delete the class. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error deleting the class:", error.message);
+      alert("An error occurred while deleting the class.");
+    }
+  };
+
+  const handleDeleteSubject = async (SubjectId) => {
+    try {
+      const response = await deleteSubject(SubjectId); // Use the correctly named parameter
+      if (response.status === 200) {
+        setSubjects((prevSubjects) =>
+          prevSubjects.filter((subject) => subject._id !== SubjectId)
+        );
+      } else {
+        alert("Failed to delete the subject. Please try again.");
+      }
+    } catch (error) {
+      alert("An error occurred while deleting the subject.");
+    }
   };
 
   useEffect(() => {
@@ -135,7 +168,12 @@ const SearchableDropdown = () => {
       try {
         const subjectData = await getSubjectData();
         if (subjectData && Array.isArray(subjectData)) {
-          setSubjects(subjectData);
+          // Normalize data to ensure all subjects have `_id` and `name`
+          const normalizedSubjects = subjectData.map((subject) => ({
+            _id: subject._id || Date.now(), // Fallback ID if missing
+            name: subject.name || "Unnamed Subject", // Fallback name
+          }));
+          setSubjects(normalizedSubjects);
         } else {
           console.error("Subject data not found or malformed response");
         }
@@ -159,6 +197,8 @@ const SearchableDropdown = () => {
     try {
       const response = await createOrUpdateStandard(standardDetails);
       if (response) {
+        const classData = await getClassData();
+        setClasses(classData);
         handleClassDialogClose();
       } else {
         console.error("Error creating/updating standard.");
@@ -227,77 +267,13 @@ const SearchableDropdown = () => {
       alert("An error occurred while creating/updating the plan.");
     }
   };
-
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleButtonClick = (option) => {
-    setSelectedOption(option);
-    handleMenuClose();
-  };
-
-  const handlePriceChange = (event, value) => {
-    setSelectedPrice(value); // Update selected price type
-  };
-
-  const handleCategoryChange = (event, value) => {
-    if (value === "Add Course") {
-      setIsCourseDialogOpen(true); // Open the Add Course dialog
-    } else {
-      setSelectedCategory(value);
-    }
-  };
-
-  const handleAddState = () => {
-    const newState = prompt("Enter the name of the new state:");
-    if (newState && !states.includes(newState)) {
-      setStates((prevStates) => [...prevStates, newState]);
-      setSelectedState(newState);
-    } else if (newState) {
-      alert("This state already exists!");
-    }
-  };
-
   const handleClassDialogClose = () => {
     setIsClassDialogOpen(false);
     setNewClassName(""); // Reset the input field
   };
 
-  const handleClassSubmit = () => {
-    if (newClassName && !classes.find((cls) => cls.name === newClassName)) {
-      const newClass = { _id: Date.now(), name: newClassName };
-      setClasses((prevClasses) => [...prevClasses, newClass]);
-      setSelectedClass(newClass); // Optionally select the newly added class
-    } else {
-      alert("Class already exists or name is invalid!");
-    }
-    handleClassDialogClose(); // Close dialog after adding
-  };
-
   const handleAddClass = () => {
     setIsClassDialogOpen(true); // Open the dialog instead of `prompt`
-  };
-
-  const handleSubjectChange = (event, value) => {
-    console.log("Selected value:", value);
-
-    if (value?.name === "Custom Subject") {
-      setIsDialogOpen(true); // Open the dialog for custom subject
-    } else if (value?._id) {
-      setSelectedSubject(value);
-      console.log("Selected subject ID:", value._id);
-      setPlanDetails((prevState) => ({
-        ...prevState,
-        productIds: [...prevState.productIds, value._id], // Allow multiple subjects
-      }));
-    } else {
-      console.warn("Invalid value selected:", value);
-    }
   };
 
   const handleBoardChange = (event, value) => {
@@ -338,49 +314,6 @@ const SearchableDropdown = () => {
     setNewMinAmount("");
     setNewMaxAmount("");
   };
-
-  // Handle adding a new course
-  const handleAddCourse = () => {
-    if (newCourseName && !categories.includes(newCourseName)) {
-      setCategories((prevCategories) => [...prevCategories, newCourseName]);
-      setSelectedCategory(newCourseName);
-    } else if (newCourseName) {
-    }
-    handleDialogClose("course"); // Close dialog after adding
-  };
-
-  const handleValidityChange = (event, value) => {
-    if (value === "Custom Validity") {
-      handleAddValidity();
-    } else {
-      setSelectedValidity(value);
-    }
-  };
-
-  const handleAddValidity = () => {
-    const newValidity = prompt("Enter the name of the new validity:");
-    if (newValidity && !validity.includes(newValidity)) {
-      setValidity((prevValidity) => [...prevValidity, newValidity]);
-      setSelectedValidity(newValidity);
-    } else if (newValidity) {
-      alert("This validity already exists!");
-    }
-  };
-
-  const handleClassChange = (event, value) => {
-    if (value?.name === "Add Class") {
-      handleAddClass(); // Open the dialog to add a new class
-    } else if (value?._id) {
-      setSelectedClass(value);
-      setPlanDetails((prevState) => ({
-        ...prevState,
-        standards: [value._id], // Use the selected class _id
-      }));
-    } else {
-      console.error("Selected class not valid:", value);
-    }
-  };
-
   return (
     <Box sx={{ margin: "80px" }}>
       {/* Category Dropdown */}
@@ -406,15 +339,15 @@ const SearchableDropdown = () => {
           />
 
           <Autocomplete
-            options={[...classes, { _id: "add-class", name: "Add Class" }]} // Special option for Add Class
+            options={[...classes, { _id: "add-class", name: "Add Class" }]} // Include "Add Class"
             onChange={(event, value) => {
               if (value?.name === "Add Class") {
-                handleAddClass(); // Open the dialog
+                handleAddClass();
               } else if (value?._id) {
                 setSelectedClass(value);
                 setPlanDetails((prevState) => ({
                   ...prevState,
-                  standards: [value._id], // Use the selected class _id
+                  standards: [value._id],
                 }));
               }
             }}
@@ -427,7 +360,7 @@ const SearchableDropdown = () => {
                 placeholder="Search or Add Class"
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    backgroundColor: "#F8FAFC !important", // Ensure it's applied
+                    backgroundColor: "#F8FAFC !important",
                     borderRadius: "8px",
                   },
                 }}
@@ -435,17 +368,34 @@ const SearchableDropdown = () => {
             )}
             renderOption={(props, option) => (
               <li {...props}>
-                {option.name === "Add Class" ? (
+                {option._id === "add-class" ? (
                   <Typography color="primary" fontWeight="bold">
                     + {option.name}
                   </Typography>
                 ) : (
-                  option.name
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    width="100%"
+                  >
+                    <Typography>{option.name}</Typography>
+                    <Button
+                      color="secondary"
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteClass(option._id);
+                      }}
+                    >
+                      Del
+                    </Button>
+                  </Box>
                 )}
               </li>
             )}
             isOptionEqualToValue={(option, value) => option._id === value._id}
           />
+
           <Dialog open={isClassDialogOpen} onClose={handleClassDialogClose}>
             <DialogTitle>Add New Class</DialogTitle>
             <DialogContent>
@@ -525,53 +475,27 @@ const SearchableDropdown = () => {
             }
             filterOptions={(options, state) => options}
           />
-          {/* Validity Dropdown */}
-          {/* <Autocomplete
-            options={["Custom Validity", ...validity]}
-            onChange={handleValidityChange}
-            value={selectedValidity}
-            className="box-input"
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                placeholder="Select or Add Validity"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
-                  },
-                }}
-              />
-            )}
-            renderOption={(props, option) => (
-              <li {...props}>
-                {option === "Custom Validity" ? (
-                  <Typography color="primary" fontWeight="bold">
-                    + {option}
-                  </Typography>
-                ) : (
-                  option
-                )}
-              </li>
-            )}
-            isOptionEqualToValue={(option, value) =>
-              option === value || value === "Custom Validity"
-            }
-            filterOptions={(options, state) => options}
-          /> */}
+
           <div className="newSubject">
             <Autocomplete
               multiple
-              options={subjects} // Pass the subjects array
+              options={subjects}
               onChange={(event, value) => {
                 console.log("Selected values:", value);
-                setSelectedSubject(value); // Update the selected subjects state
+                setSelectedSubject(Array.isArray(value) ? value : []);
                 setPlanDetails((prevState) => ({
                   ...prevState,
-                  productIds: value.map((subject) => subject._id), // Map selected subjects to their IDs
+                  productIds: Array.isArray(value)
+                    ? value.map((subject) => subject._id)
+                    : [],
                 }));
               }}
-              value={selectedSubject} // Controlled value as an array
+              value={Array.isArray(selectedSubject) ? selectedSubject : []} // Ensure it's always an array
               className="box-input"
+              getOptionLabel={(option) => option?.name || ""}
+              isOptionEqualToValue={(option, value) =>
+                option?._id === value?._id
+              }
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -584,8 +508,24 @@ const SearchableDropdown = () => {
                   }}
                 />
               )}
-              getOptionLabel={(option) => option.name} // Display subject name
-              isOptionEqualToValue={(option, value) => option._id === value._id} // Match by ID
+              renderOption={(props, option) => (
+                <li
+                  {...props}
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <span>{option?.name || "Unnamed Subject"}</span>
+                  <Button
+                    color="secondary"
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteSubject(option?._id);
+                    }}
+                  >
+                    Del
+                  </Button>
+                </li>
+              )}
             />
 
             <Button
@@ -659,7 +599,6 @@ const SearchableDropdown = () => {
             )}
           />
         </div>
-       
       </div>
       <Button
         variant="contained"
